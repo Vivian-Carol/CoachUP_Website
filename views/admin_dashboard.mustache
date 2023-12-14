@@ -1,0 +1,234 @@
+<head>
+
+    {{>header}}
+
+<style>
+        .update-popup {
+            display: none;
+        }
+
+        .sidebar {
+            width: 30%;
+            padding: 20px;
+            color: black;
+        }
+
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+            margin-top: 40px;
+        }
+
+        .sidebar a {
+            text-decoration: none;
+            color: black;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+
+        .sidebar a i {
+            margin-right: 10px;
+        }
+
+        .content-sections {
+            width: 70%;
+            padding: 20px;
+        }
+
+        .form-group input{
+            border-radius: none;
+            margin: 4px;
+        }
+
+    </style>
+
+</head>
+<body style="margin: 0; padding: 0; box-sizing: border-box; height: 100vh;">
+
+    <div class="container-fluid" style="height: 100%;">
+        <h1>Welcome, Admin</h1>
+
+        <div class="d-flex">
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <ul class="list-unstyled">
+                    <li class="mt-4 p-2"><a href="#"><i class="bi bi-person-fill" style="font-size: 24px;"></i>Admin</a></li>
+                    <li class="mt-4 p-2"><a href="/admin/dashboard"><i class="bi bi-speedometer" style="font-size: 24px;"></i>Dashboard</a></li>
+                    <li class="mt-4 p-2"><a href="/admin_dashboard"><i class="bi bi-plus-square-fill" style="font-size: 24px;"></i>Add/Modify/Remove Opportunities</a></li>
+                    <li class="mt-4 p-2"><a href="#"><i class="bi bi-gear-fill" style="font-size: 24px;"></i>Settings</a></li>
+                    <li class="mt-4 p-2"><a href="/students/logout"><i class="bi bi-box-arrow-left" style="font-size: 24px;"></i>Logout</a></li>
+                </ul>
+            </div>
+
+            <!-- Content Sections -->
+            <div class="content-sections">
+                <!-- Add Mentorship Program -->
+                <section>
+                    <h2>Add/Modify Mentorship Program</h2>
+                    <form id="addProgramForm" method="POST" action="/students/addProgram">
+                        <div class="form-group">
+                            <label for="programCode">Program Code:</label>
+                            <input type="text" id="programCode" name="programCode" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label for="opportunityName">Mentorship Opportunity Name:</label>
+                            <input type="text" id="opportunityName" name="opportunityName" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label for="mentorCoach">Mentor/Coach:</label>
+                            <input type="text" id="mentorCoach" name="mentorCoach" class="form-control"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="duration">Duration</label>
+                            <input type="text" id="duration" name="duration" class="form-control">
+                        </div>
+                        <button type="submit" class="btn btn-dark" style="border-radius: 0; background-color: white; color: black; border: none; width: 120px; margin:4px;">Add</button>
+                    </form>
+                </section>
+
+                <!-- Add Coach -->
+                <section>
+                    <h2>Add/Modify Coach</h2>
+                    <form id="addCoachForm" method="POST" action="/students/addCoach">
+                        <div class="form-group">
+                            <label for="coachName">Coach Name:</label>
+                            <input type="text" id="coachName" name="coachName" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label for="coachEmail">Coach Email:</label>
+                            <input type="text" id="coachEmail" name="coachEmail" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label for="coachProgram">Mentorship/Program:</label>
+                            <input type="text" id="coachProgram" name="coachProgram" class="form-control"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="coachQualification">Qualification:</label>
+                            <input type="text" id="coachQualification" name="coachQualification" class="form-control">
+                        </div>
+                        <button type="submit" class="btn btn-dark" style="border-radius: 0; background-color: white; color: black; border: none; width: 120px; margin:4px;">Add</button>
+                    </form>
+                </section>
+            </div>
+        </div>
+    </div>    
+        
+<script>
+
+    //PROGRAMS
+    document.getElementById("addProgramForm").addEventListener("submit", function (event) {
+        event.preventDefault();
+        handleFormSubmit();
+    });
+
+    // Function to handle form submission
+    async function handleFormSubmit() {
+        // Get values from the form fields
+        const programCode = document.getElementById("programCode").value;
+        const opportunityName = document.getElementById("opportunityName").value;
+        const mentorCoach = document.getElementById("mentorCoach").value;
+        const duration = document.getElementById("duration").value;
+
+        // Create an object with the form data
+        const formData = {
+            programCode: programCode,
+            opportunityName: opportunityName,
+            mentorCoach: mentorCoach,
+            duration: duration
+        };
+
+        try {
+            // Send a POST request to the server
+            const response = await fetch('/students/addProgram', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData),
+            });
+
+            const responseData = await response.json();
+
+            if (response.ok && responseData.success) {
+                // Handle success, e.g., show a success message
+                alert(responseData.message);
+                
+                // Redirect to the form page
+                window.location.href = "/admin/dashboard";
+            } else {
+                // Request failed, log the error details
+                console.error('Error:', response.statusText, responseData);
+                // Show an error message with details
+                alert(responseData.message || 'Failed to add program. Please try again.');
+            }
+        } catch (error) {
+            // Log the error details
+            console.error('Error:', error);
+            // Show a generic error message
+            alert('An error occurred. Please try again.');
+        }
+    }
+
+
+    //COACHES
+    // Add event listener for coach form submission
+    document.getElementById("addCoachForm").addEventListener("submit", function (event) {
+        event.preventDefault();
+        handleCoachFormSubmit();
+    });
+
+    // Function to handle coach form submission
+    async function handleCoachFormSubmit() {
+        // Get values from the coach form fields
+        const coachName = document.getElementById("coachName").value;
+        const coachEmail = document.getElementById("coachEmail").value;
+        const coachProgram = document.getElementById("coachProgram").value;
+        const coachQualification = document.getElementById("coachQualification").value;
+
+        // Create an object with the coach form data
+        const coachFormData = {
+            coachName: coachName,
+            coachEmail: coachEmail,
+            coachProgram: coachProgram,
+            coachQualification: coachQualification
+        };
+
+        try {
+            // Send a POST request to the server for coaches
+            const response = await fetch('/students/addCoach', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(coachFormData),
+            });
+
+            const responseData = await response.json();
+
+            if (response.ok && responseData.success) {
+                // Handle success, e.g., show a success message
+                alert(responseData.message);
+
+                // Redirect to the form page
+                window.location.href = "/admin/dashboard";
+            } else {
+                // Request failed, log the error details
+                console.error('Error:', response.statusText, responseData);
+                // Show an error message with details
+                alert(responseData.message || 'Failed to add coach. Please try again.');
+            }
+        } catch (error) {
+            // Log the error details
+            console.error('Error:', error);
+            // Show a generic error message
+            alert('An error occurred. Please try again.');
+        }
+    }
+
+</script>
+
+       
+
+
+</body>
+</html>

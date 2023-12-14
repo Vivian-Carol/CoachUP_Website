@@ -1,0 +1,72 @@
+body {
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+    min-height: 100vh;
+    width: 100%;
+    font-family: 'Poppins', sans-serif;
+    background: #D9D9D9;
+
+}
+
+h1 {
+    color: #E1658B;
+    font-weight: bold;
+}
+
+h2 {
+    color: #E1658B;
+    font-weight: bold;
+    font-size: 1.3rem;
+}
+
+h3 {
+    font-weight: bold;
+    font-size: 1.3rem;
+}
+
+h5 {
+    font-weight: lighter;
+    font-size: 1rem;
+}
+
+.paragraph {
+    font-size: .8rem;
+}
+
+.navbar-brand {
+    color: #E1658B;
+    font-weight: bold;
+    font-size: 1.5rem;
+}
+
+.navbar {
+    background-color: #312163;
+}
+
+.navbar-nav .nav-link {
+    color: white;
+}
+
+.form-control::placeholder {
+    color: #e8e7e7;
+}
+
+.btn-outline-success {
+    color: black;
+    background-color: white;
+}
+
+.card {
+    background: #D9D9D9;
+    max-width: 100%;
+}
+
+.transparent-card {
+    border: none;
+    background: transparent;
+}
+
+footer {
+    width: 100%;
+}
