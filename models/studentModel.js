@@ -103,66 +103,73 @@ class StudentModel {
         });
     }
 
-    // Model function to update a mentorship program
-    updateMentorshipProgram(programCode, updatedProgramCode, updatedOpportunityName, updatedMentorCoach, updatedDuration) {
+    // Function to get all coach names
+    findAllCoachNames() {
         return new Promise((resolve, reject) => {
+            this.coachesDb.find({}, { coachName: 1, _id: 0 }, (err, coachNames) => {
+                if (err) {
+                    reject(err);
+                }
+                resolve(coachNames);
+            });
+        });
+    }
 
-            // Find the program by _id
-            this.mentorshipDb.findOne({ programCode }, (findErr, program) => {
-                if (findErr) {
-                    reject(findErr);
-                } else if (!program) {
-                    reject('Program not found.');
+    // Function to find a coach by name
+    findCoachByName(coachName) {
+        return new Promise((resolve, reject) => {
+            this.coachesDb.findOne({ coachName }, (err, coach) => {
+                if (err) {
+                    reject(err);
                 } else {
-
-                    // Update program fields
-                    program.programCode = updatedProgramCode;
-                    program.opportunityName = updatedOpportunityName;
-                    program.mentorCoach = updatedMentorCoach;
-                    program.duration = updatedDuration;
-
-                    // Update the program in the database
-                    this.mentorshipDb.update({ programCode }, program, {}, (updateErr, numReplaced) => {
-                        if (updateErr) {
-                            reject(updateErr);
-                        } else {
-                            resolve(numReplaced);
-                        }
-                    });
+                    resolve(coach);
                 }
             });
         });
-    };
+    }
 
-    removeProgram(programCode) {
+
+    updateProgram(_id, updatedData) {
         return new Promise((resolve, reject) => {
-            // Check if the program exists
-            this.mentorshipDb.remove({ programCode: programCode }, {}, (findErr, program) => {
-                if (findErr) {
-                    reject(findErr);
+            // Use NeDB's `update` method to update the program
+            this.mentorshipDb.update({ _id }, { $set: updatedData }, {}, (updateErr, numUpdated) => {
+                if (updateErr) {
+                    reject(updateErr);
                     return;
                 }
-
-                if (!program) {
+    
+                if (numUpdated === 0) {
                     console.log('Program not found');
                     resolve(false);
+                } else {
+                    console.log('Program updated:', _id);
+                    resolve(true);
+                }
+            });
+        });
+    }
+    
+
+    removeProgram(_id) {
+        return new Promise((resolve, reject) => {
+            // Remove the program by _id
+            this.mentorshipDb.remove({ _id }, {}, (removeErr, numRemoved) => {
+                if (removeErr) {
+                    reject(removeErr);
                     return;
                 }
 
-                console.log('Removing program:', programCode);
-                // Remove the program
-                this.mentorshipDb.remove({ programCode }, {}, (removeErr, numRemoved) => {
-                    if (removeErr) {
-                        reject(removeErr);
-                        return;
-                    }
-
-                    console.log('Program deleted:', numRemoved);
-                    resolve(numRemoved > 0);
-                });
+                if (numRemoved === 0) {
+                    console.log('Program not found');
+                    resolve(false);
+                } else {
+                    console.log('Program deleted:', _id);
+                    resolve(true);
+                }
             });
         });
-    };
+    }
+
 
     // Insert a new booking into the booking database
     insertBooking(booking) {

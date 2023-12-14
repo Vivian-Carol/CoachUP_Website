@@ -264,6 +264,46 @@ exports.getAllCoaches = async (req, res) => {
     }
 };
 
+
+// Controller function to get all coach names
+exports.getAllCoachNames = async (req, res) => {
+    try {
+        // Retrieve only coach names from the database
+        const coachName = await studentModel.findAllCoachNames();
+        res.json({ success: true, coachName });
+    } catch (error) {
+        console.error('Error getting coach names:', error);
+        res.status(500).json({ success: false, message: 'Failed to get coach names. Please try again.' });
+    }
+};
+
+// Controller function to get the coach's email based on the selected name
+exports.getCoachEmail = async (req, res) => {
+    try {
+        const { coachName } = req.query;
+
+        console.log('Received coachName:', coachName);
+
+        if (!coachName) {
+            return res.status(400).json({ success: false, message: 'Coach name is required.' });
+        }
+
+        // Query your NeDB or database to get the email for the provided coachName
+        const coach = await studentModel.findCoachByName({ coachName });
+
+        if (coach && coach.coachEmail) {
+            res.json({ success: true, email: coach.coachEmail });
+        } else {
+            res.json({ success: false, message: 'Coach not found' });
+        }
+    } catch (error) {
+        console.error('Error getting coach email:', error);
+        res.status(500).json({ success: false, message: 'Failed to get coach email. Please try again.' });
+    }
+};
+
+
+
 // Controller function to display coaches data
 exports.displayCoachesData = function (req, res) {
     studentModel.findAllCoaches()
@@ -296,42 +336,33 @@ exports.renderUpdateForm = function (req, res) {
 };
 
 // Controller function to update a program
-exports.updateProgram = async (req, res) => {
-    const {
-        _id: programId,
-        updatedProgramCode,
-        updatedOpportunityName,
-        updatedMentorCoach,
-        updatedDuration,
-    } = req.body;
+exports.updateProgram = async (_id, updatedData) => {
+    return new Promise((resolve, reject) => {
+        // Use NeDB's `update` method to update the program
+        studentModel.mentorshipDb.update({ _id }, { $set: updatedData }, {}, (updateErr, numUpdated) => {
+            if (updateErr) {
+                reject(updateErr);
+                return;
+            }
 
-    try {
-        const numReplaced = await studentModel.updateMentorshipProgram(
-            programId,
-            updatedProgramCode,
-            updatedOpportunityName,
-            updatedMentorCoach,
-            updatedDuration
-        );
-
-        if (numReplaced > 0) {
-            console.log('Program updated:', programId);
-            res.redirect('/admin/dashboard');
-        } else {
-            res.status(404).send('Program not found or could not be updated.');
-        }
-    } catch (error) {
-        console.error('Error updating program:', error);
-        res.status(500).send('Error updating program.');
-    }
+            if (numUpdated === 0) {
+                console.log('Program not found');
+                resolve(false);
+            } else {
+                console.log('Program updated:', _id);
+                resolve(true);
+            }
+        });
+    });
 };
 
 
+// Define the controller function for removing a program
 exports.removeProgram = async (req, res) => {
-    const { programCode } = req.body;
+    const { _id } = req.query; // Use req.query to get the _id from the URL
 
     try {
-        const result = await studentModel.removeProgram(programCode);
+        const result = await studentModel.removeProgram(_id);
 
         if (result) {
             res.send('Program deleted successfully');

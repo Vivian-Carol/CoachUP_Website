@@ -1,7 +1,5 @@
 <head>
     {{>header}}
-    <!-- Include Bootstrap CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" integrity="sha384-rbs5ZZCE5JDI5YG8WnkgBMz81F5U5f5JAgMPFQFsz5ibpXy0RqD2EJL0sXU2GoC" crossorigin="anonymous">
     <style>
         .sidebar {
             width: 30%;
@@ -117,10 +115,10 @@
                                     data-bs-toggle="modal"
                                     data-bs-target="#bookingModal"
                                     data-program='{
-                                        "goal": "Career Advice",
-                                        "coach": "Coach Name 1",
-                                        "email": "coach1@example.com",
-                                        "date": "2023-12-31",
+                                        "goal": "",
+                                        "coach": "",
+                                        "email": "",
+                                        "date": "",
                                         "document": ""
                                     }'
                                     >Book Session</button>
@@ -219,7 +217,7 @@
           <div class="form-group">
             <label for="coach">Choose Coach/Mentor</label>
             <select class="form-control" id="coach" name="coach" required>
-              <!-- Populate this dropdown with coach/mentor names -->
+                 <option value="">Select Coach/Mentor</option>
             </select>
           </div>
           <div class="form-group">
@@ -392,6 +390,64 @@
                 $('#bookingModal').modal('show');
             });
         });
+
+        // Function to fetch coach names and populate the <select> element
+        function populateCoaches() {
+            console.log('Fetching coach names...');
+            fetch('/students/getCoachNames')
+                .then(response => response.json())
+                .then(data => {
+                    const coachSelect = document.getElementById('coach');
+                    const emailInput = document.getElementById('email');
+
+                    // Clear existing options (except the first empty one)
+                    while (coachSelect.options.length > 1) {
+                        coachSelect.remove(1);
+                    }
+
+                    // Populate the <select> with fetched coach names
+                    data.coachName.forEach(coachName => {
+                        const option = document.createElement('option');
+                        option.value = coachName.coachName;
+                        option.textContent = coachName.coachName;
+                        coachSelect.appendChild(option);
+                    });
+
+                    // Add an event listener to the <select> element to update the email input
+                    coachSelect.addEventListener('change', () => {
+                        const selectedCoachName = coachSelect.value;
+
+                        console.log(selectedCoachName);
+
+                        // Fetch the coach's email based on the selected name
+                        fetch(`/students/getCoachEmail?coachName=${encodeURIComponent(selectedCoachName)}`)
+                            .then(response => response.json())
+                            .then(data => {
+                                const selectedCoachEmail = data.email;
+
+                                console.log(selectedCoachName);
+                                console.log(data.email);
+
+                                // Set the email input field to the retrieved email
+                                emailInput.value = selectedCoachEmail;
+                            })
+                            .catch(error => {
+                                console.error('Error fetching coach email:', error);
+                            });
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching coach names:', error);
+                });
+        }
+
+        // Add an event listener to the modal to populate coaches when it's shown
+        $('#bookingModal').on('show.bs.modal', populateCoaches);
+
+
+
+
+
 
     </script>
         
