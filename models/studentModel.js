@@ -148,7 +148,7 @@ class StudentModel {
             });
         });
     }
-    
+
 
     removeProgram(_id) {
         return new Promise((resolve, reject) => {

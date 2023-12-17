@@ -20,11 +20,9 @@ router.get('/students/getCoaches', studentController.getAllCoaches);
 router.get('/students/getCoachNames', studentController.getAllCoachNames);
 router.get('/students/getCoachEmail', studentController.getCoachEmail);
 
-
-
 //admin routes
 router.get('/admin_login', studentController.adminlogin)
-router.post('/admin/landing_loggedIn_Page', studentController.adminLoggedIn)
+router.post('/admin/login_page', studentController.adminLoggedIn)
 
 // Add middleware to check user role for admin routes
 const checkAdminRole = (req, res, next) => {
@@ -56,12 +54,16 @@ router.get('/admin/dashboard', checkAdminRole, async (req, res) => {
     }
 });
 
+//router.get('/displayDetails', (req, res) => {
+//    res.render('displayDetails');
+//});
+
 // Render the page with the form
 router.get('/admin_dashboard', (req, res) => {
     res.render('admin_dashboard.mustache');
 });
 
-router.post('/logout', studentController.logout);
+router.get('/logout', studentController.logout);
 //router.get('/events', studentController.displayData)
 //router.get('/coaches', studentController.displayCoachesData)
 
@@ -78,62 +80,31 @@ const checkRequestBody = (req, res, next) => {
 
 // Add the middleware before the route handler
 router.post('/students/searchByCode', studentController.searchByCode);
-router.put('/students/updateProgram/:_id', async (req, res) => {
-    const { _id } = req.params; // Get the _id from the URL
-    const updatedProgramData = req.body; // Get the updated data from the request body
+router.post('/students/updateProgram', studentController.updateProgram);
 
-    try {
-        // Call a function to update the program using _id and updatedProgramData
-        const result = await studentModel.updateProgram(_id, updatedProgramData);
-
-        if (result) {
-            res.send('Program updated successfully');
-        } else {
-            res.status(404).send('Program not found or could not be updated.');
-        }
-    } catch (error) {
-        console.error('Error updating program:', error);
-        res.status(500).send('Error updating program.');
-    }
+// Add a GET route for /students/removeProgram
+router.get('/students/removeProgram', (req, res) => {
+     res.status(405).send('Method Not Allowed');
 });
-
-
-
 
 // Add a POST route for /students/removeProgram
-router.delete('/students/removeProgram', async (req, res) => {
-    const { _id } = req.query; // Use req.query to get the _id from the URL
-
-    try {
-        const result = await studentModel.removeProgram(_id);
-
-        if (result) {
-            res.send('Program deleted successfully');
-        } else {
-            res.status(404).send('Program not found or could not be deleted.');
-        }
-    } catch (error) {
-        console.error('Error deleting program:', error);
-        res.status(500).send('Error deleting program.');
-    }
-});
-
+router.post('/students/removeProgram', checkRequestBody, studentController.removeProgram);
 router.post('/testInsertMentorship', studentController.testInsertMentorship);
 
 // Booking routes
 router.post('/bookings', studentController.createBooking);
 router.get('/booked-sessions', async (req, res) => {
     try {
-        // Fetch booking data from the controller
-        const bookings = await studentController.getAllBookings();
-
-        // Render the Mustache template with the booking data
-        res.render('booked-sessions', { booking: bookings });
+      // Fetch booking data from the controller
+      const bookings = await studentController.getAllBookings();
+  
+      // Render the Mustache template with the booking data
+      res.render('booked-sessions', { booking: bookings });
     } catch (error) {
-        // Handle errors appropriately
-        res.status(500).send('Internal Server Error');
+      // Handle errors appropriately
+      res.status(500).send('Internal Server Error');
     }
-});
+  });
 router.get('/bookings/:bookingId', studentController.getBookingById);
 router.put('/bookings/:bookingId', studentController.updateBooking);
 router.delete('/bookings/:bookingId', studentController.removeBooking);
