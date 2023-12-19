@@ -90,7 +90,7 @@
                 <li class="mt-4 p-2"><a href="#"><i class="bi bi-chat-left-text-fill" style="font-size: 24px;"></i>Message</a></li>
                 <li class="mt-4 p-2"><a href="#"><i class="bi bi-plus-square-fill" style="font-size: 24px;"></i>Add/Modify/Remove Opportunities</a></li>
                 <li class="mt-4 p-2"><a href="#"><i class="bi bi-gear-fill" style="font-size: 24px;"></i>Settings</a></li>
-                <li class="mt-4 p-2" id="logoutButton"><a href="/logout"><i class="bi bi-box-arrow-left" style="font-size: 24px;"></i>Logout</a></li>
+                <li class="mt-4 p-2" id="logoutButton"><a href="/students/logout"><i class="bi bi-box-arrow-left" style="font-size: 24px;"></i>Logout</a></li>
             </ul>
         </div>
 
@@ -181,9 +181,9 @@
                                 <th>Option</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody id="booking-template">
                             <tr>
-                                {{#booking}}
+                                {{#bookings}}
                                 <td>{{goal}}</td>
                                 <td>{{coach}}</td>
                                 <td>{{email}}</td>
@@ -194,7 +194,7 @@
                                     <button class="btn btn-primary mx-2 update-session-button" >Update</button>
                                     <button class="btn btn-primary mx-2 delete-session-button" >Delete</button>
                                 </td>
-                                {{/booking}}
+                                {{/bookings}}
                             </tr>
                         </tbody>
                     </table>
@@ -209,7 +209,8 @@
         <h5 class="modal-title" id="bookingModalLabel">Book Session</h5>
       </div>
       <div class="modal-body">
-        <form id="bookingForm">
+        <form id="bookingForm" method="POST" action='/bookings_insert' >
+          <input type="hidden" id="userId" name="userId" value={{ user._id }}/>
           <div class="form-group">
             <label for="goal">Set Goal</label>
             <input type="text" class="form-control" id="goal" name="goal" required>
@@ -222,7 +223,7 @@
           </div>
           <div class="form-group">
             <label for="email">Email</label>
-            <input type="email" class="form-control" id="email" name="email" readonly>
+            <input type="text" class="form-control" id="email" name="email">
           </div>
           <div class="form-group">
             <label for="date">Select Date</label>
@@ -353,6 +354,9 @@
     <!-- Include Bootstrap JS at the end of the body -->
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js" integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.7.7/handlebars.min.js"></script>
+
 
     <script>
         // Toggle display of additional enrolled courses on "View More" click
@@ -393,12 +397,11 @@
 
         // Function to fetch coach names and populate the <select> element
         function populateCoaches() {
-            console.log('Fetching coach names...');
-            fetch('/students/getCoachNames')
+            // Make an AJAX request to fetch coach names from the server
+            fetch('/students/getCoaches') // Replace with the correct API endpoint
                 .then(response => response.json())
                 .then(data => {
                     const coachSelect = document.getElementById('coach');
-                    const emailInput = document.getElementById('email');
 
                     // Clear existing options (except the first empty one)
                     while (coachSelect.options.length > 1) {
@@ -406,34 +409,11 @@
                     }
 
                     // Populate the <select> with fetched coach names
-                    data.coachName.forEach(coachName => {
+                    data.coaches.forEach(coach => {
                         const option = document.createElement('option');
-                        option.value = coachName.coachName;
-                        option.textContent = coachName.coachName;
+                        option.value = coach.coachName; // Use "coachName" property for the name
+                        option.textContent = coach.coachName; // Display the name
                         coachSelect.appendChild(option);
-                    });
-
-                    // Add an event listener to the <select> element to update the email input
-                    coachSelect.addEventListener('change', () => {
-                        const selectedCoachName = coachSelect.value;
-
-                        console.log(selectedCoachName);
-
-                        // Fetch the coach's email based on the selected name
-                        fetch(`/students/getCoachEmail?coachName=${encodeURIComponent(selectedCoachName)}`)
-                            .then(response => response.json())
-                            .then(data => {
-                                const selectedCoachEmail = data.email;
-
-                                console.log(selectedCoachName);
-                                console.log(data.email);
-
-                                // Set the email input field to the retrieved email
-                                emailInput.value = selectedCoachEmail;
-                            })
-                            .catch(error => {
-                                console.error('Error fetching coach email:', error);
-                            });
                     });
                 })
                 .catch(error => {
@@ -444,8 +424,132 @@
         // Add an event listener to the modal to populate coaches when it's shown
         $('#bookingModal').on('show.bs.modal', populateCoaches);
 
+   
+        // Add an event listener for form submission
+        document.getElementById("submitBooking")?.addEventListener("click", function () {
+        handleBookingSubmit();
+        });
+
+        // Function to handle booking form submission
+        async function handleBookingSubmit() {
+        const goal = document.getElementById("goal").value;
+        const coach = document.getElementById("coach").value;
+        const email = document.getElementById("email").value;
+        const date = document.getElementById("date").value;
+        const documentFile = document.getElementById("document").files[0];
+
+        const formData = new FormData();
+        formData.append("goal", goal);
+        formData.append("coach", coach);
+        formData.append("email", email);
+        formData.append("date", date);
+        formData.append("document", documentFile);
+
+        try {
+            const response = await fetch("/bookings_insert", {
+            method: "POST",
+            body: formData,
+            });
+
+            if (response.ok) {
+            alert("Session booked successfully!");
+            // Optionally, you can close the modal or perform other actions here
+            } 
+            else {
+            const responseData = await response.json();
+            console.error("Error:", responseData.error || "Failed to book session.");
+            alert("An error occurred. Please try again.");
+            }
+        } catch (error) {
+            console.error("Error:", error);
+            alert("An error occurred. Please try again.");
+        }
+        }
+
+        // Wait for the DOM to be ready
+        document.addEventListener("DOMContentLoaded", function () {
+            // Define a function to render the data using Handlebars
+            function renderBookings(bookings) {
+                const templateSource = document.getElementById("booking-template");
+
+                bookings.forEach((booking, i)=>{
+                    const templ = `
+                        <tr>
+                            <td>${booking.goal}</td>
+                            <td>${booking.coach}</td>
+                            <td>${booking.email}</td>
+                            <td>${booking.date}</td>
+                            <td>${booking.document}</td>
+                            <td>
+                                <button class="btn btn-primary mx-2 update-session-button" >Update</button>
+                                <button class="btn btn-primary mx-2 delete-session-button" >Delete</button>
+                            </td>
+                        </tr>
+                    `
+                    console.log(templ);
+                    templateSource.insertAdjacentHTML("afterbegin", templ)
+
+                })
+                
+                //const template = Handlebars.compile(templateSource);
+                //const html = template({ bookings });
+                //document.querySelector(".session-table tbody").innerHTML = html;
+            }
+
+            const userId = document.getElementById("userId");
+
+            // Make an AJAX GET request to fetch bookings data from the server
+            const formData = new FormData();
+            formData.append("userId", userId?.value);
+            const urlId = userId?.value?.split("/")[0]
+            fetch(`/my-bookings/${userId?.value}`)
+                .then((response) => response.json())
+                .then((data) => {
+                    // Assuming the server returns an array of bookings
+                    console.log("DATA", data)
+                    renderBookings(data);
+                })
+                .catch((error) => {
+                    console.error("Error fetching data:", error);
+                });
+        });
 
 
+//update and delete bookings
+        function updateBooking(bookingId) {
+            // Send a PUT request to update the booking
+            fetch(`/bookings/${bookingId}`, {
+                method: 'PUT',
+                // Include the updated data in the request body
+                body: JSON.stringify(updatedData), // Replace with your actual data
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            })
+            .then((response) => {
+                if (response.ok) {
+                    // Handle successful update
+                    // Reload or update the UI as needed
+                } else {
+                    // Handle errors
+                }
+            });
+        }
+
+        function deleteBooking(bookingId) {
+            // Send a DELETE request to remove the booking
+            fetch(`/bookings/${bookingId}`, {
+                method: 'DELETE',
+            })
+            .then((response) => {
+                if (response.ok) {
+                    // Handle successful deletion
+                    // Remove the booking from the UI
+                } else {
+                    // Handle errors
+                }
+            });
+        }
 
 
 

@@ -1,6 +1,7 @@
 const express = require('express');
 const mustacheExpress = require('mustache-express');
 const session = require('express-session');
+const jwt = require('jsonwebtoken');
 const studentRoutes = require('./routes/studentRoutes');
 const path = require('path');
 // Enable CORS
@@ -27,6 +28,31 @@ app.use(
     })
 );
 
+const isAuthenticated = (req, res, next) => {
+    if (req.session && req.session.userId) {
+      return next();
+    } else {
+      res.redirect('/login');
+    }
+  };
+
+module.exports = { isAuthenticated };
+
+const setUserId = (req, res, next) => {
+    const token = req.header('Authorization');
+    if (!token) {
+      return res.status(401).send('No token provided.');
+    }
+  
+    try {
+      const decoded = jwt.verify(token, '1234');
+      req.userId = decoded._id;
+      next();
+    } catch (ex) {
+      res.status(400).send('Invalid token.');
+    }
+  };
+
 app.post('/logout', (req, res) => {
     req.session.destroy((err) => {
         if (err) {
@@ -43,12 +69,14 @@ app.use(express.urlencoded({ extended: false }));
 app.get('/', (req, res) => {
     res.sendFile(__dirname + '/public/index.html');
 });
+
 app.use('/', studentRoutes);
 
 // Include the studentRoutes
 app.use('/', studentRoutes);
 app.use('/students', studentRoutes);
 app.use('/admin', studentRoutes);
+app.use('/bookings', setUserId, studentRoutes);
 
 app.post('/students/removeProgram', (req, res) => {
     // Assuming you have a function in your studentModel to remove the program by code

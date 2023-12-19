@@ -254,6 +254,18 @@ exports.addCoach = async function (req, res) {
     }
 };
 
+// Controller function to display coaches data
+exports.displayCoachesData = function (req, res) {
+    studentModel.findAllCoaches()
+        .then((coaches) => {
+            res.render('displayDetails', { coaches });
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+            res.status(500).send('Internal Server Error');
+        });
+};
+
 // Controller function to get all coaches
 exports.getAllCoaches = async (req, res) => {
     try {
@@ -278,47 +290,6 @@ exports.getAllCoachNames = async (req, res) => {
         res.status(500).json({ success: false, message: 'Failed to get coach names. Please try again.' });
     }
 };
-
-// Controller function to get the coach's email based on the selected name
-exports.getCoachEmail = async (req, res) => {
-    try {
-        const { coachName } = req.query;
-
-        console.log('Received coachName:', coachName);
-
-        if (!coachName) {
-            return res.status(400).json({ success: false, message: 'Coach name is required.' });
-        }
-
-        // Query your NeDB or database to get the email for the provided coachName
-        const coach = await studentModel.findCoachByName({ coachName });
-
-        if (coach && coach.coachEmail) {
-            res.json({ success: true, email: coach.coachEmail });
-        } else {
-            res.json({ success: false, message: 'Coach not found' });
-        }
-    } catch (error) {
-        console.error('Error getting coach email:', error);
-        res.status(500).json({ success: false, message: 'Failed to get coach email. Please try again.' });
-    }
-};
-
-
-
-// Controller function to display coaches data
-exports.displayCoachesData = function (req, res) {
-    studentModel.findAllCoaches()
-        .then((coaches) => {
-            res.render('displayDetails', { coaches });
-        })
-        .catch((error) => {
-            console.error('Error:', error);
-            res.status(500).send('Internal Server Error');
-        });
-};
-
-
 
 // Controller function to render the update form
 exports.renderUpdateForm = function (req, res) {
@@ -393,11 +364,14 @@ exports.testInsertMentorship = async (req, res) => {
 
 // Controller to create a new booking
 exports.createBooking = async (req, res) => {
+
     try {
-        const { goal, coach, email, date, document } = req.body;
-        const booking = { goal, coach, email, date, document };
+        const { goal, coach, email, date, document, userId } = req.body;
+
+        const booking = { goal, coach, email, date, document, userId: userId?.split("/")[0] };
+
         const newBooking = await studentModel.insertBooking(booking);
-        res.status(201).json(newBooking);
+        res.redirect('/dashboard');
     } catch (error) {
         res.status(500).json({ error: 'Internal Server Error' });
     }
@@ -406,8 +380,11 @@ exports.createBooking = async (req, res) => {
 // Controller to get all bookings
 exports.getAllBookings = async (req, res) => {
     try {
-        const bookings = await studentModel.findAllBookings();
-        res.json(bookings);
+        const { userId } = req.params;
+        console.log("BODY", userId)
+        const bookings = await studentModel.findBookingsByUserId(userId);
+        console.log("BOOKINGS", bookings);
+        res.status(200).json(bookings);
     } catch (error) {
         res.status(500).json({ error: 'Internal Server Error' });
     }
@@ -458,3 +435,18 @@ exports.removeBooking = async (req, res) => {
         res.status(500).json({ error: 'Internal Server Error' });
     }
 };
+
+//-----------------------------------------------------------------------------------------
+
+// authorization check when fetching bookings
+exports.getBookingsForUser = async (req, res) => {
+    try {
+        const userId = req.session.user.id; // Assuming you store user ID in the session
+        const bookings = await studentModel.findBookingsByUserId(userId);
+        res.json(bookings);
+    } catch (error) {
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+};
+
+//-----------------------------------------------------------------------------------------

@@ -1,6 +1,7 @@
 const express = require('express');
 const studentController = require('../controllers/studentController');
 const studentModel = require('../models/studentModel');
+const { isAuthenticated } = require('../index.js');
 
 const router = express.Router();
 
@@ -18,7 +19,6 @@ router.get('/dashboard', studentController.dashboard);
 router.post('/students/addCoach', studentController.addCoach);
 router.get('/students/getCoaches', studentController.getAllCoaches);
 router.get('/students/getCoachNames', studentController.getAllCoachNames);
-router.get('/students/getCoachEmail', studentController.getCoachEmail);
 
 //admin routes
 router.get('/admin_login', studentController.adminlogin)
@@ -84,7 +84,7 @@ router.post('/students/updateProgram', studentController.updateProgram);
 
 // Add a GET route for /students/removeProgram
 router.get('/students/removeProgram', (req, res) => {
-     res.status(405).send('Method Not Allowed');
+    res.status(405).send('Method Not Allowed');
 });
 
 // Add a POST route for /students/removeProgram
@@ -92,19 +92,10 @@ router.post('/students/removeProgram', checkRequestBody, studentController.remov
 router.post('/testInsertMentorship', studentController.testInsertMentorship);
 
 // Booking routes
-router.post('/bookings', studentController.createBooking);
-router.get('/booked-sessions', async (req, res) => {
-    try {
-      // Fetch booking data from the controller
-      const bookings = await studentController.getAllBookings();
-  
-      // Render the Mustache template with the booking data
-      res.render('booked-sessions', { booking: bookings });
-    } catch (error) {
-      // Handle errors appropriately
-      res.status(500).send('Internal Server Error');
-    }
-  });
+router.post('/bookings_insert', studentController.createBooking);
+router.get('/my-bookings/:userId', studentController.getAllBookings);
+
+
 router.get('/bookings/:bookingId', studentController.getBookingById);
 router.put('/bookings/:bookingId', studentController.updateBooking);
 router.delete('/bookings/:bookingId', studentController.removeBooking);

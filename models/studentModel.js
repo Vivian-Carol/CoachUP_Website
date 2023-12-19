@@ -115,61 +115,66 @@ class StudentModel {
         });
     }
 
-    // Function to find a coach by name
-    findCoachByName(coachName) {
+    // Model function to update a mentorship program
+    updateMentorshipProgram(programCode, updatedProgramCode, updatedOpportunityName, updatedMentorCoach, updatedDuration) {
         return new Promise((resolve, reject) => {
-            this.coachesDb.findOne({ coachName }, (err, coach) => {
-                if (err) {
-                    reject(err);
+
+            // Find the program by _id
+            this.mentorshipDb.findOne({ programCode }, (findErr, program) => {
+                if (findErr) {
+                    reject(findErr);
+                } else if (!program) {
+                    reject('Program not found.');
                 } else {
-                    resolve(coach);
+
+                    // Update program fields
+                    program.programCode = updatedProgramCode;
+                    program.opportunityName = updatedOpportunityName;
+                    program.mentorCoach = updatedMentorCoach;
+                    program.duration = updatedDuration;
+
+                    // Update the program in the database
+                    this.mentorshipDb.update({ programCode }, program, {}, (updateErr, numReplaced) => {
+                        if (updateErr) {
+                            reject(updateErr);
+                        } else {
+                            resolve(numReplaced);
+                        }
+                    });
                 }
             });
         });
-    }
+    };
 
-
-    updateProgram(_id, updatedData) {
+    removeProgram(programCode) {
         return new Promise((resolve, reject) => {
-            // Use NeDB's `update` method to update the program
-            this.mentorshipDb.update({ _id }, { $set: updatedData }, {}, (updateErr, numUpdated) => {
-                if (updateErr) {
-                    reject(updateErr);
-                    return;
-                }
-    
-                if (numUpdated === 0) {
-                    console.log('Program not found');
-                    resolve(false);
-                } else {
-                    console.log('Program updated:', _id);
-                    resolve(true);
-                }
-            });
-        });
-    }
-
-
-    removeProgram(_id) {
-        return new Promise((resolve, reject) => {
-            // Remove the program by _id
-            this.mentorshipDb.remove({ _id }, {}, (removeErr, numRemoved) => {
-                if (removeErr) {
-                    reject(removeErr);
+            // Check if the program exists
+            this.mentorshipDb.remove({ programCode: programCode }, {}, (findErr, program) => {
+                if (findErr) {
+                    reject(findErr);
                     return;
                 }
 
-                if (numRemoved === 0) {
+                if (!program) {
                     console.log('Program not found');
                     resolve(false);
-                } else {
-                    console.log('Program deleted:', _id);
-                    resolve(true);
+                    return;
                 }
+
+                console.log('Removing program:', programCode);
+                // Remove the program
+                this.mentorshipDb.remove({ programCode }, {}, (removeErr, numRemoved) => {
+                    if (removeErr) {
+                        reject(removeErr);
+                        return;
+                    }
+
+                    console.log('Program deleted:', numRemoved);
+                    resolve(numRemoved > 0);
+                });
             });
         });
-    }
-
+    };
 
     // Insert a new booking into the booking database
     insertBooking(booking) {
@@ -190,6 +195,16 @@ class StudentModel {
     findAllBookings() {
         return new Promise((resolve, reject) => {
             this.bookingDb.find({}, (err, bookings) => {
+                if (err) reject(err);
+                resolve(bookings);
+            });
+        });
+    }
+
+    // Find bookings for a specific user
+    findBookingsByUserId(userId) {
+        return new Promise((resolve, reject) => {
+            this.bookingDb.find({ userId: userId }, (err, bookings) => {
                 if (err) reject(err);
                 resolve(bookings);
             });
@@ -241,7 +256,9 @@ class StudentModel {
         });
     }
 
-};
+}
+
+
 
 const studentModel = new StudentModel('./db/students.db');
 
