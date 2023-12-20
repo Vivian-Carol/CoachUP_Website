@@ -120,7 +120,7 @@ document.addEventListener("DOMContentLoaded", function () {
                             <td>${booking.date}</td>
                             <td>${booking.document}</td>
                             <td id="${booking._id}">
-                                <button class="btn btn-primary mx-2 update-session-button" onclick="updateBooking('${booking._id}')">Update</button>
+                                <button class="btn btn-primary mx-2 update-session-button" onclick="openUpdateModal('${booking._id}')">Update</button>
                                 <button class="btn btn-light mx-2 delete-session-button" onclick="deleteBooking('${booking._id}')">Delete</button>
                             </td>
                         </tr>
@@ -129,10 +129,6 @@ document.addEventListener("DOMContentLoaded", function () {
             templateSource.insertAdjacentHTML("afterbegin", templ)
 
         })
-
-        //const template = Handlebars.compile(templateSource);
-        //const html = template({ bookings });
-        //document.querySelector(".session-table tbody").innerHTML = html;
     }
 
     const userId = document.getElementById("userId");
@@ -153,29 +149,68 @@ document.addEventListener("DOMContentLoaded", function () {
         });
 });
 
-const updateBooking = bookingId => {
 
-    fetch(`/bookings/${bookingId}`, {
-        method: 'PUT',
-        // Include the updated data in the request body
-        body: JSON.stringify(updatedData), // Replace with your actual data
-        headers: {
-            'Content-Type': 'application/json',
-        },
-    })
-        .then((response) => {
-            if (response.ok) {
-                // Handle successful update
-                // Reload or update the UI as needed
-            } else {
-                // Handle errors
-            }
+function openUpdateModal(bookingId) {
+    fetch(`/bookings/${bookingId}`)
+        .then(response => response.json())
+        .then(data => {
+            // Populate the modal's form fields with this data
+            document.getElementById('bookingId').value = bookingId;
+            document.getElementById('goal').value = data.goal;
+            document.getElementById('coach').value = data.coach;
+            document.getElementById('email').value = data.email;
+            document.getElementById('date').value = data.date;
+            document.getElementById('document').value = data.document;
+            $('#updateModal').modal('show');
         });
 }
 
+document.querySelectorAll('.update-session-button').forEach(button => {
+    button.addEventListener('click', () => {
+        const bookingId = button.parentNode.id;
+        openUpdateModal(bookingId);
+    });
+});
+
+const updateBooking = async (bookingId) => {
+    console.log(bookingId);
+    const updatedData = {
+        goal: document.getElementById('goal').value,
+        email: document.getElementById('email').value,
+        date: document.getElementById('date').value,
+    };
+
+    try {
+        const response = await fetch(`/bookings/${bookingId}`, {
+            method: 'PUT',
+            body: JSON.stringify(updatedData),
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+
+        if (response.ok) {
+            alert('Booking Details Updated successfully');
+            $('#updateModal').modal('hide');
+            window.location.reload();
+        } else {
+            console.error('Error:', await response.text());
+        }
+    } catch (error) {
+        console.error('Error:', error);
+    }
+}
+
+document.getElementById('updateBookingButton').addEventListener('click', (event) => {
+    event.preventDefault();
+    const bookingId = document.getElementById('bookingId').value;
+    updateBooking(bookingId);
+});
+
+
 async function deleteBooking(bookingId) {
     console.log("Delete booking", bookingId)
-    const confirmation = confirm('Are you sure you want to delete this program?');
+    const confirmation = confirm('Are you sure you want to delete this Booked Session?');
     if (!confirmation) {
         return;
     }

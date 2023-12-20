@@ -264,39 +264,42 @@
 
             <div class="modal fade" id="updateModal" tabindex="-1" role="dialog" aria-labelledby="updateModalLabel" aria-hidden="true">
                 <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="upadeteModalLabel">Update Session</h5>
-                </div>
-                <div class="modal-body">
-                    <form id="updateForm">
-                    <input type="hidden" id="userId" name="userId" value={{ user._id }}/>
-                    <div class="form-group">
-                        <label for="goal">Set Goal</label>
-                        <input type="text" class="form-control" id="goal" name="goal" required>
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="upadeteModalLabel">Update Session</h5>
+                        </div>
+                        <div class="modal-body">
+                            <form id="updateForm">
+                                <input type="hidden" id="bookingId" name="bookingId" value={{ booking._id }}/>
+                                <div class="form-group">
+                                    <label for="goal">Set Goal</label>
+                                    <input type="text" class="form-control" id="goal" name="goal" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="coach">Choose Coach/Mentor</label>
+                                    <select class="form-control" id="coach" name="coach" readonly>
+                                        <option value="">Select Coach/Mentor</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="email">Email</label>
+                                    <input type="text" class="form-control" id="email" name="email">
+                                </div>
+                                <div class="form-group">
+                                    <label for="date">Select Date</label>
+                                    <input type="date" class="form-control" id="date" name="date" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="document">Upload Document (if any)</label>
+                                    <input type="file" class="form-control-file" id="document" name="document" readonly>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    <button type="submit" class="btn btn-primary" id="updateBookingButton">Update Session</button>
+                                </div>
+                            </form>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label for="coach">Choose Coach/Mentor</label>
-                        <select class="form-control" id="coach" name="coach" required>
-                            <option value="">Select Coach/Mentor</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="email">Email</label>
-                        <input type="text" class="form-control" id="email" name="email">
-                    </div>
-                    <div class="form-group">
-                        <label for="date">Select Date</label>
-                        <input type="date" class="form-control" id="date" name="date" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="document">Upload Document (if any)</label>
-                        <input type="file" class="form-control-file" id="document" name="document">
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Update Session</button>
-                    </form>
                 </div>
             </div>
 
@@ -305,7 +308,7 @@
             
             <!-- Third Section - Coaches Section -->
             <section class="coaches-section">
-            <h2>My Coaches/Mentors</h2>
+                <h2>My Coaches/Mentors</h2>
                 <div class="row">
                     <div class="col-md-4">
                         <div class="coach-card">
@@ -343,41 +346,40 @@
                 </div>
             </section>
 
-<!-- Fourth Section - Notifications -->
-<section class="notifications-section" style="height: 400px;">
-    <div style="background-color: white; height: 100%; padding: 20px;">
+        <!-- Fourth Section - Notifications -->
+        <section class="notifications-section" style="height: 400px;">
+            <div style="background-color: white; height: 100%; padding: 20px;">
 
-        <h2 style="color: #E1658B; text-align: center; margin-bottom: 20px;">Notifications</h2>
+                <h2 style="color: #E1658B; text-align: center; margin-bottom: 20px;">Notifications</h2>
 
-        <!-- Cards Row -->
-        <div class="row">
-            <div class="col-md-4">
-                <div class="card text-start" style="background-color: #D9D9D9; padding: 20px; margin-bottom: 20px; height: 100%;">
-                    <h4 style="color: #E1658B;">Opportunity Update</h4>
-                    <p style="color: #000000;">Your opportunity has been updated. Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+                <!-- Cards Row -->
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="card text-start" style="background-color: #D9D9D9; padding: 20px; margin-bottom: 20px; height: 100%;">
+                            <h4 style="color: #E1658B;">Opportunity Update</h4>
+                            <p style="color: #000000;">Your opportunity has been updated. Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="card text-start" style="background-color: #D9D9D9; padding: 20px; margin-bottom: 20px; height: 100%;">
+                            <h4 style="color: #E1658B;">Opportunity Update</h4>
+                            <p style="color: #000000;">Your opportunity has been updated. Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="card text-start no-border" style="background-color: #D9D9D9; padding: 20px; margin-bottom: 20px; height: 100%;">
+                            <h4 style="color: #E1658B;">Opportunity Update</h4>
+                            <p style="color: #000000;">Your opportunity has been updated. Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+                        </div>
+                    </div>
                 </div>
             </div>
-
-            <div class="col-md-4">
-                <div class="card text-start" style="background-color: #D9D9D9; padding: 20px; margin-bottom: 20px; height: 100%;">
-                    <h4 style="color: #E1658B;">Opportunity Update</h4>
-                    <p style="color: #000000;">Your opportunity has been updated. Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-                </div>
+            <div class="view-more" style="padding: 20px;">
+                <a href="#" style="color: #E1658B;">View More</a>
             </div>
-
-            <div class="col-md-4">
-                <div class="card text-start no-border" style="background-color: #D9D9D9; padding: 20px; margin-bottom: 20px; height: 100%;">
-                    <h4 style="color: #E1658B;">Opportunity Update</h4>
-                    <p style="color: #000000;">Your opportunity has been updated. Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- View More Option -->
-    <div class="view-more" style="padding: 20px;">
-        <a href="#" style="color: #E1658B;">View More</a>
-    </div>
-</section>
+        </section>
 
 
 

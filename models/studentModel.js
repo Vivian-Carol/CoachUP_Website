@@ -228,15 +228,38 @@ class StudentModel {
     // Update a booking by its ID
     updateBooking(bookingId, updatedData) {
         return new Promise((resolve, reject) => {
-            this.bookingDb.update({ _id: bookingId }, { $set: updatedData }, {}, (err, numReplaced) => {
-                if (err) {
-                    console.error('Error updating booking:', err);
-                    reject(err);
+            this.bookingDb.findOne({ _id: bookingId }, (findErr, bookings) => {
+                if (findErr) {
+                    reject(findErr);
+
+                    console.log('whyyyyyyyyyyy');
+                    console.log('Error');
+                } else if (!bookings) {
+                    reject('Program not found.');
+                    console.log('Program not found.');
                 } else {
-                    console.log('Booking updated:', numReplaced);
-                    resolve(numReplaced);
+
+                    // Update program fields
+                    console.log("To Update: " + bookings);
+                    bookings = {}
+
+                    bookings.goal = updatedData.goal;
+                    bookings.email = updatedData.email;
+                    bookings.date = updatedData.date;
+
+                    this.bookingDb.update({ _id: bookingId }, { $set: updatedData }, {}, (err, numReplaced) => {
+                        if (err) {
+                            console.error('Error updating booking:', err);
+                            reject(err);
+                        } else {
+                            console.log('Booking updated:', numReplaced);
+                            resolve(numReplaced);
+                        }
+                    });
                 }
+                console.log('ALL DONE');
             });
+
         });
     }
 

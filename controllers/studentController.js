@@ -312,10 +312,10 @@ exports.renderUpdateForm = function (req, res) {
 
 // Controller function to update a program
 exports.updateProgram = async (req, res) => {
-    const programId = req.params.programId; // Extract programId from request parameters
+    const programId = req.params.programId;
     console.log("_id: " + programId);
     console.log(req.body);
-    const updatedData = req.body; // Assuming the updated data is sent in the request body
+    const updatedData = req.body;
 
     try {
         const success = await studentModel.updateMentorshipProgram(programId, updatedData);
@@ -410,8 +410,12 @@ exports.getBookingById = async (req, res) => {
 
 exports.updateBooking = async (req, res) => {
     try {
-        const { bookingId } = req.params;
+        console.log('hello world!');
+        const {bookingId} = req.params;
+        console.log('_id:' + bookingId);
+        console.log('here you go:' + JSON.stringify(req.body));
         const updatedData = req.body;
+        
         const numReplaced = await studentModel.updateBooking(bookingId, updatedData);
         if (numReplaced > 0) {
             res.json({ message: 'Booking updated successfully' });
@@ -419,6 +423,7 @@ exports.updateBooking = async (req, res) => {
             res.status(404).json({ error: 'Booking not found' });
         }
     } catch (error) {
+        console.error(error);
         res.status(500).json({ error: 'Internal Server Error' });
     }
 };
