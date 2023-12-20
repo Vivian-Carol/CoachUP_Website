@@ -28,16 +28,6 @@ app.use(
     })
 );
 
-const isAuthenticated = (req, res, next) => {
-    if (req.session && req.session.userId) {
-      return next();
-    } else {
-      res.redirect('/login');
-    }
-  };
-
-module.exports = { isAuthenticated };
-
 const setUserId = (req, res, next) => {
     const token = req.header('Authorization');
     if (!token) {
@@ -52,6 +42,17 @@ const setUserId = (req, res, next) => {
       res.status(400).send('Invalid token.');
     }
   };
+
+const isAuthenticated = (req, res, next) => {
+    if (req.session && req.session.userId) {
+      return next();
+    } else {
+      res.redirect('/login');
+    }
+  };
+
+module.exports = isAuthenticated;
+
 
 app.post('/logout', (req, res) => {
     req.session.destroy((err) => {

@@ -308,31 +308,33 @@ exports.renderUpdateForm = function (req, res) {
         });
 };
 
-// Controller function to update a program
-exports.updateProgram = async (_id, updatedData) => {
-    return new Promise((resolve, reject) => {
-        // Use NeDB's `update` method to update the program
-        studentModel.mentorshipDb.update({ _id }, { $set: updatedData }, {}, (updateErr, numUpdated) => {
-            if (updateErr) {
-                reject(updateErr);
-                return;
-            }
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-            if (numUpdated === 0) {
-                console.log('Program not found');
-                resolve(false);
-            } else {
-                console.log('Program updated:', _id);
-                resolve(true);
-            }
-        });
-    });
+// Controller function to update a program
+exports.updateProgram = async (req, res) => {
+    const programId = req.params.programId; // Extract programId from request parameters
+    console.log("_id: " + programId);
+    console.log(req.body);
+    const updatedData = req.body; // Assuming the updated data is sent in the request body
+
+    try {
+        const success = await studentModel.updateMentorshipProgram(programId, updatedData);
+        if (success) {
+            res.json({ message: 'Program updated successfully' });
+        } else {
+            res.status(404).json({ error: 'Program not found' });
+        }
+    } catch (error) {
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
 };
+
 
 
 // Define the controller function for removing a program
 exports.removeProgram = async (req, res) => {
-    const { _id } = req.query; // Use req.query to get the _id from the URL
+    const { _id } = req.query;
+    console.log(_id);
 
     try {
         const result = await studentModel.removeProgram(_id);
@@ -348,7 +350,7 @@ exports.removeProgram = async (req, res) => {
     }
 };
 
-
+//-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 exports.testInsertMentorship = async (req, res) => {
     const program = { name: 'Test Program', description: 'This is a test program' };
@@ -381,7 +383,7 @@ exports.createBooking = async (req, res) => {
 exports.getAllBookings = async (req, res) => {
     try {
         const { userId } = req.params;
-        console.log("BODY", userId)
+        console.log("BODY: " + userId)
         const bookings = await studentModel.findBookingsByUserId(userId);
         console.log("BOOKINGS", bookings);
         res.status(200).json(bookings);
@@ -405,7 +407,7 @@ exports.getBookingById = async (req, res) => {
     }
 };
 
-// Controller to update a booking
+
 exports.updateBooking = async (req, res) => {
     try {
         const { bookingId } = req.params;
@@ -421,11 +423,13 @@ exports.updateBooking = async (req, res) => {
     }
 };
 
-// Controller to remove a booking
+
 exports.removeBooking = async (req, res) => {
+
+    const {bookingId} = req.params;
+    
     try {
-        const { bookingId } = req.params;
-        const removed = await studentModel.removeBooking(bookingId);
+        const removed = await studentModel.removeUserBooking(bookingId);
         if (removed) {
             res.json({ message: 'Booking removed successfully' });
         } else {
@@ -435,18 +439,3 @@ exports.removeBooking = async (req, res) => {
         res.status(500).json({ error: 'Internal Server Error' });
     }
 };
-
-//-----------------------------------------------------------------------------------------
-
-// authorization check when fetching bookings
-exports.getBookingsForUser = async (req, res) => {
-    try {
-        const userId = req.session.user.id; // Assuming you store user ID in the session
-        const bookings = await studentModel.findBookingsByUserId(userId);
-        res.json(bookings);
-    } catch (error) {
-        res.status(500).json({ error: 'Internal Server Error' });
-    }
-};
-
-//-----------------------------------------------------------------------------------------

@@ -54,9 +54,6 @@ router.get('/admin/dashboard', checkAdminRole, async (req, res) => {
     }
 });
 
-//router.get('/displayDetails', (req, res) => {
-//    res.render('displayDetails');
-//});
 
 // Render the page with the form
 router.get('/admin_dashboard', (req, res) => {
@@ -80,15 +77,15 @@ const checkRequestBody = (req, res, next) => {
 
 // Add the middleware before the route handler
 router.post('/students/searchByCode', studentController.searchByCode);
-router.post('/students/updateProgram', studentController.updateProgram);
 
-// Add a GET route for /students/removeProgram
-router.get('/students/removeProgram', (req, res) => {
-    res.status(405).send('Method Not Allowed');
-});
+//---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+router.put('/students/updateProgram/:programId', studentController.updateProgram);
+
 
 // Add a POST route for /students/removeProgram
-router.post('/students/removeProgram', checkRequestBody, studentController.removeProgram);
+router.delete('/students/removeProgram', checkRequestBody, studentController.removeProgram);
+
+//----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 router.post('/testInsertMentorship', studentController.testInsertMentorship);
 
 // Booking routes

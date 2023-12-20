@@ -115,66 +115,63 @@ class StudentModel {
         });
     }
 
-    // Model function to update a mentorship program
-    updateMentorshipProgram(programCode, updatedProgramCode, updatedOpportunityName, updatedMentorCoach, updatedDuration) {
-        return new Promise((resolve, reject) => {
+    //-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+    // Model function to update a mentorship program
+    updateMentorshipProgram(Program_Id, updatedData) {
+        return new Promise((resolve, reject) => {
+            console.log(Program_Id);
             // Find the program by _id
-            this.mentorshipDb.findOne({ programCode }, (findErr, program) => {
+            this.mentorshipDb.findOne({ _id: Program_Id }, (findErr, program) => {
                 if (findErr) {
                     reject(findErr);
+                    console.log('Error');
                 } else if (!program) {
                     reject('Program not found.');
+                    console.log('Program not found.');
                 } else {
 
                     // Update program fields
-                    program.programCode = updatedProgramCode;
-                    program.opportunityName = updatedOpportunityName;
-                    program.mentorCoach = updatedMentorCoach;
-                    program.duration = updatedDuration;
+                    console.log("To Update: " + program);
+                    program = {}
+
+                    program.programCode = updatedData.programCode;
+                    program.opportunityName = updatedData.opportunityName;
+                    program.mentorCoach = updatedData.mentorCoach;
+                    program.duration = updatedData.duration;
 
                     // Update the program in the database
-                    this.mentorshipDb.update({ programCode }, program, {}, (updateErr, numReplaced) => {
+                    this.mentorshipDb.update({ _id: Program_Id }, { $set: updatedData }, {}, (updateErr, numReplaced) => {
                         if (updateErr) {
                             reject(updateErr);
                         } else {
+                            console.log("Updated!")
                             resolve(numReplaced);
                         }
                     });
                 }
             });
-        });
+        }
+        );
     };
 
     removeProgram(programCode) {
         return new Promise((resolve, reject) => {
             // Check if the program exists
-            this.mentorshipDb.remove({ programCode: programCode }, {}, (findErr, program) => {
+            this.mentorshipDb.remove({ _id: programCode }, {}, (findErr, program) => {
                 if (findErr) {
                     reject(findErr);
                     return;
                 }
 
-                if (!program) {
-                    console.log('Program not found');
-                    resolve(false);
-                    return;
-                }
-
-                console.log('Removing program:', programCode);
-                // Remove the program
-                this.mentorshipDb.remove({ programCode }, {}, (removeErr, numRemoved) => {
-                    if (removeErr) {
-                        reject(removeErr);
-                        return;
-                    }
-
-                    console.log('Program deleted:', numRemoved);
-                    resolve(numRemoved > 0);
-                });
+                console.log('Program deleted:', programCode);
+                resolve(programCode);
             });
         });
+        //});
     };
+
+    //----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
     // Insert a new booking into the booking database
     insertBooking(booking) {
@@ -226,6 +223,8 @@ class StudentModel {
         });
     }
 
+    //==========================================================================================================================================================================    
+
     // Update a booking by its ID
     updateBooking(bookingId, updatedData) {
         return new Promise((resolve, reject) => {
@@ -242,9 +241,9 @@ class StudentModel {
     }
 
     // Remove a booking by its ID
-    removeBooking(bookingId) {
+    removeUserBooking(_id) {
         return new Promise((resolve, reject) => {
-            this.bookingDb.remove({ _id: bookingId }, {}, (err, numRemoved) => {
+            this.bookingDb.remove({ _id: _id }, {}, (err, numRemoved) => {
                 if (err) {
                     console.error('Error removing booking:', err);
                     reject(err);
@@ -257,6 +256,8 @@ class StudentModel {
     }
 
 }
+
+//=============================================================================================================================================================
 
 
 

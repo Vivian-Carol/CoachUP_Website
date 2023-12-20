@@ -73,6 +73,12 @@
            border: none;
            color: black;  
         }
+
+        .session-table {
+            overflow-x: auto;
+            overflow-y: auto;
+            height: 400px;
+        }
     </style>
 </head>
 <body style="margin: 0; padding: 0; box-sizing: border-box; height: 100vh;">
@@ -122,8 +128,6 @@
                                         "document": ""
                                     }'
                                     >Book Session</button>
-                                <button class="btn btn-secondary mx-2">Modify</button>
-                                <button class="btn btn-danger mx-2">Remove</button>
                             </div>
                         </div>
                     </div>
@@ -137,9 +141,17 @@
                                 <i class="bi bi-bookmark-check-fill" style="color: #3B8D48; font-size: 24px;"></i>
                             </div>
                             <div class="d-flex justify-content-center mt-3">
-                                <button class="btn btn-primary mx-2">Book Session</button>
-                                <button class="btn btn-secondary mx-2">Modify</button>
-                                <button class="btn btn-danger mx-2">Remove</button>
+                                <button type="button" class="btn btn-primary mx-2 book-session-button"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#bookingModal"
+                                    data-program='{
+                                        "goal": "",
+                                        "coach": "",
+                                        "email": "",
+                                        "date": "",
+                                        "document": ""
+                                    }'
+                                    >Book Session</button>
                             </div>
                         </div>
                     </div>
@@ -153,9 +165,17 @@
                                 <i class="bi bi-bookmark-check-fill" style="color: #3B8D48; font-size: 24px;"></i>
                             </div>
                             <div class="d-flex justify-content-center mt-3">
-                                <button class="btn btn-primary mx-2">Book Session</button>
-                                <button class="btn btn-secondary mx-2">Modify</button>
-                                <button class="btn btn-danger mx-2">Remove</button>
+                                <button type="button" class="btn btn-primary mx-2 book-session-button"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#bookingModal"
+                                    data-program='{
+                                        "goal": "",
+                                        "coach": "",
+                                        "email": "",
+                                        "date": "",
+                                        "document": ""
+                                    }'
+                                    >Book Session</button>
                             </div>
                         </div>
                     </div>
@@ -189,11 +209,8 @@
                                 <td>{{email}}</td>
                                 <td>{{date}}</td>
                                 <td>{{document}}</td>
-                                <td>Option</td>
                                 <td>
-                                    <button class="btn btn-primary mx-2 update-session-button" >Update</button>
-                                    <button class="btn btn-primary mx-2 delete-session-button" >Delete</button>
-                                </td>
+                                
                                 {{/bookings}}
                             </tr>
                         </tbody>
@@ -202,48 +219,90 @@
             </section>
 
             <!-- Booking Modal -->
-<div class="modal fade" id="bookingModal" tabindex="-1" role="dialog" aria-labelledby="bookingModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="bookingModalLabel">Book Session</h5>
-      </div>
-      <div class="modal-body">
-        <form id="bookingForm" method="POST" action='/bookings_insert' >
-          <input type="hidden" id="userId" name="userId" value={{ user._id }}/>
-          <div class="form-group">
-            <label for="goal">Set Goal</label>
-            <input type="text" class="form-control" id="goal" name="goal" required>
-          </div>
-          <div class="form-group">
-            <label for="coach">Choose Coach/Mentor</label>
-            <select class="form-control" id="coach" name="coach" required>
-                 <option value="">Select Coach/Mentor</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label for="email">Email</label>
-            <input type="text" class="form-control" id="email" name="email">
-          </div>
-          <div class="form-group">
-            <label for="date">Select Date</label>
-            <input type="date" class="form-control" id="date" name="date" required>
-          </div>
-          <div class="form-group">
-            <label for="document">Upload Document (if any)</label>
-            <input type="file" class="form-control-file" id="document" name="document">
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            <button type="submit" class="btn btn-primary">Book</button>
-           </div>
-        </form>
-      </div>
-    </div>
-  </div>
-</div>
+            <div class="modal fade" id="bookingModal" tabindex="-1" role="dialog" aria-labelledby="bookingModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="bookingModalLabel">Book Session</h5>
+                </div>
+                <div class="modal-body">
+                    <form id="bookingForm" method="POST" action='/bookings_insert' >
+                    <input type="hidden" id="userId" name="userId" value={{ user._id }}/>
+                    <div class="form-group">
+                        <label for="goal">Set Goal</label>
+                        <input type="text" class="form-control" id="goal" name="goal" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="coach">Choose Coach/Mentor</label>
+                        <select class="form-control" id="coach" name="coach" required>
+                            <option value="">Select Coach/Mentor</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="text" class="form-control" id="email" name="email">
+                    </div>
+                    <div class="form-group">
+                        <label for="date">Select Date</label>
+                        <input type="date" class="form-control" id="date" name="date" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="document">Upload Document (if any)</label>
+                        <input type="file" class="form-control-file" id="document" name="document">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Book</button>
+                    </div>
+                    </form>
+                </div>
+                </div>
+            </div>
+            </div>
+
+            <!-- update Modal -->
+
+            <div class="modal fade" id="updateModal" tabindex="-1" role="dialog" aria-labelledby="updateModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="upadeteModalLabel">Update Session</h5>
+                </div>
+                <div class="modal-body">
+                    <form id="updateForm">
+                    <input type="hidden" id="userId" name="userId" value={{ user._id }}/>
+                    <div class="form-group">
+                        <label for="goal">Set Goal</label>
+                        <input type="text" class="form-control" id="goal" name="goal" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="coach">Choose Coach/Mentor</label>
+                        <select class="form-control" id="coach" name="coach" required>
+                            <option value="">Select Coach/Mentor</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="text" class="form-control" id="email" name="email">
+                    </div>
+                    <div class="form-group">
+                        <label for="date">Select Date</label>
+                        <input type="date" class="form-control" id="date" name="date" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="document">Upload Document (if any)</label>
+                        <input type="file" class="form-control-file" id="document" name="document">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Update Session</button>
+                    </form>
+                </div>
+            </div>
 
 
+            
+            
             <!-- Third Section - Coaches Section -->
             <section class="coaches-section">
             <h2>My Coaches/Mentors</h2>
@@ -356,204 +415,7 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js" integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.7.7/handlebars.min.js"></script>
-
-
-    <script>
-        // Toggle display of additional enrolled courses on "View More" click
-        document.querySelector('.view-more').addEventListener('click', function () {
-            document.querySelectorAll('.enrolled-courses .row .col-md-6:nth-child(n+3)').forEach(function (course) {
-                course.classList.toggle('d-none');
-            });
-        });
-
-
-        // Get all book session buttons
-        const bookSessionButtons = document.querySelectorAll('.book-session-button');
-
-        // Get the booking form elements
-        const goalInput = document.getElementById('goal');
-        const coachInput = document.getElementById('coach');
-        const emailInput = document.getElementById('email');
-        const dateInput = document.getElementById('date');
-        const documentInput = document.getElementById('document');
-
-        // Add click event listener to each book session button
-        bookSessionButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                // Get the data-program attribute value
-                const sessionData = JSON.parse(button.getAttribute('data-program'));
-
-                // Populate the form fields with session data
-                goalInput.value = sessionData.goal;
-                coachInput.value = sessionData.coach;
-                emailInput.value = sessionData.email;
-                dateInput.value = sessionData.date;
-                documentInput.value = sessionData.document;
-
-                // Show the booking modal
-                $('#bookingModal').modal('show');
-            });
-        });
-
-        // Function to fetch coach names and populate the <select> element
-        function populateCoaches() {
-            // Make an AJAX request to fetch coach names from the server
-            fetch('/students/getCoaches') // Replace with the correct API endpoint
-                .then(response => response.json())
-                .then(data => {
-                    const coachSelect = document.getElementById('coach');
-
-                    // Clear existing options (except the first empty one)
-                    while (coachSelect.options.length > 1) {
-                        coachSelect.remove(1);
-                    }
-
-                    // Populate the <select> with fetched coach names
-                    data.coaches.forEach(coach => {
-                        const option = document.createElement('option');
-                        option.value = coach.coachName; // Use "coachName" property for the name
-                        option.textContent = coach.coachName; // Display the name
-                        coachSelect.appendChild(option);
-                    });
-                })
-                .catch(error => {
-                    console.error('Error fetching coach names:', error);
-                });
-        }
-
-        // Add an event listener to the modal to populate coaches when it's shown
-        $('#bookingModal').on('show.bs.modal', populateCoaches);
-
-   
-        // Add an event listener for form submission
-        document.getElementById("submitBooking")?.addEventListener("click", function () {
-        handleBookingSubmit();
-        });
-
-        // Function to handle booking form submission
-        async function handleBookingSubmit() {
-        const goal = document.getElementById("goal").value;
-        const coach = document.getElementById("coach").value;
-        const email = document.getElementById("email").value;
-        const date = document.getElementById("date").value;
-        const documentFile = document.getElementById("document").files[0];
-
-        const formData = new FormData();
-        formData.append("goal", goal);
-        formData.append("coach", coach);
-        formData.append("email", email);
-        formData.append("date", date);
-        formData.append("document", documentFile);
-
-        try {
-            const response = await fetch("/bookings_insert", {
-            method: "POST",
-            body: formData,
-            });
-
-            if (response.ok) {
-            alert("Session booked successfully!");
-            // Optionally, you can close the modal or perform other actions here
-            } 
-            else {
-            const responseData = await response.json();
-            console.error("Error:", responseData.error || "Failed to book session.");
-            alert("An error occurred. Please try again.");
-            }
-        } catch (error) {
-            console.error("Error:", error);
-            alert("An error occurred. Please try again.");
-        }
-        }
-
-        // Wait for the DOM to be ready
-        document.addEventListener("DOMContentLoaded", function () {
-            // Define a function to render the data using Handlebars
-            function renderBookings(bookings) {
-                const templateSource = document.getElementById("booking-template");
-
-                bookings.forEach((booking, i)=>{
-                    const templ = `
-                        <tr>
-                            <td>${booking.goal}</td>
-                            <td>${booking.coach}</td>
-                            <td>${booking.email}</td>
-                            <td>${booking.date}</td>
-                            <td>${booking.document}</td>
-                            <td>
-                                <button class="btn btn-primary mx-2 update-session-button" >Update</button>
-                                <button class="btn btn-primary mx-2 delete-session-button" >Delete</button>
-                            </td>
-                        </tr>
-                    `
-                    console.log(templ);
-                    templateSource.insertAdjacentHTML("afterbegin", templ)
-
-                })
-                
-                //const template = Handlebars.compile(templateSource);
-                //const html = template({ bookings });
-                //document.querySelector(".session-table tbody").innerHTML = html;
-            }
-
-            const userId = document.getElementById("userId");
-
-            // Make an AJAX GET request to fetch bookings data from the server
-            const formData = new FormData();
-            formData.append("userId", userId?.value);
-            const urlId = userId?.value?.split("/")[0]
-            fetch(`/my-bookings/${userId?.value}`)
-                .then((response) => response.json())
-                .then((data) => {
-                    // Assuming the server returns an array of bookings
-                    console.log("DATA", data)
-                    renderBookings(data);
-                })
-                .catch((error) => {
-                    console.error("Error fetching data:", error);
-                });
-        });
-
-
-//update and delete bookings
-        function updateBooking(bookingId) {
-            // Send a PUT request to update the booking
-            fetch(`/bookings/${bookingId}`, {
-                method: 'PUT',
-                // Include the updated data in the request body
-                body: JSON.stringify(updatedData), // Replace with your actual data
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            })
-            .then((response) => {
-                if (response.ok) {
-                    // Handle successful update
-                    // Reload or update the UI as needed
-                } else {
-                    // Handle errors
-                }
-            });
-        }
-
-        function deleteBooking(bookingId) {
-            // Send a DELETE request to remove the booking
-            fetch(`/bookings/${bookingId}`, {
-                method: 'DELETE',
-            })
-            .then((response) => {
-                if (response.ok) {
-                    // Handle successful deletion
-                    // Remove the booking from the UI
-                } else {
-                    // Handle errors
-                }
-            });
-        }
-
-
-
-    </script>
+<script src="/public/js/dashboard.js" type="text/javascript" ></script>
         
 </body>
 </html>
