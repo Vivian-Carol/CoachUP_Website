@@ -5,6 +5,10 @@ A mentorship platform where students/mentee can find mentorship programs and pro
 Hosted on Renderer. Hosting link provided below:
 https://node-app-yi9w.onrender.com/ 
 
+Admin log in Credentials: email: 'admin@gmail.com' and password: 'Admin'
+
+Students must sign-up so that their information can be saved in the system database the log in using their credentials
+
 
 File and Folder Descriptions:
 File/Folder
