@@ -1,8 +1,12 @@
+# CoachUP_Website
+A mentorship platform where students/mentee can find mentorship programs and professionals to mentor them.
 
+
+Hosted on Renderer. Hosting link provided below:
+https://node-app-yi9w.onrender.com/ 
 
 
 File and Folder Descriptions:
-
 File/Folder
 Purpose and Description
 index.js
@@ -21,4 +25,7 @@ routes/
 Folder containing route files. studentRoutes.js defines the application's routes and maps them to controller functions.
 views/
 Folder for Mustache view templates. Includes templates like header.mustache, admin_login.mustache, displayDetails.mustache, etc., for rendering various parts of the web application.
+
+
+CoachUp Platform was Designed and Created by Caroline Vivian Anyango Otuoma 2023 Web Development 2 Assignment.
 
