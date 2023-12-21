@@ -1,3 +1,4 @@
+const { render } = require('mustache');
 const studentModel = require('../models/studentModel');
 const bcrypt = require('bcrypt');
 
@@ -36,13 +37,11 @@ exports.signupSubmit = function (req, res) {
                         studentModel.insert(user)
                             .then((newUser) => {
                                 console.log('New User Inserted in the student database');
-                                console.log('User Data:', newUser); // Display the entered data
+                                console.log('User Data:', newUser);
 
-                                // Redirect to the signup success page
                                 res.redirect('/students/signupSuccess');
                             })
                             .catch((error) => {
-                                // Handle the error, e.g., show an error message or redirect to an error page
                                 res.send('Error: Unable to save user information.');
                             });
                     }
@@ -50,7 +49,6 @@ exports.signupSubmit = function (req, res) {
             }
         })
         .catch((error) => {
-            // Handle the error, e.g., show an error message or redirect to an error page
             res.send('Error: Unable to check email availability.');
         });
 };
@@ -70,7 +68,6 @@ exports.loggedIn = function (req, res) {
     studentModel.findByEmail(email)
         .then((user) => {
             if (!user) {
-                // User doesn't exist in the database
                 res.send('User doesn\'t exist in the database.');
             } else {
                 // Compare the submitted password with the stored hashed password
@@ -90,15 +87,20 @@ exports.loggedIn = function (req, res) {
             }
         })
         .catch((error) => {
-            // Handle any database error
             res.send('Error: Unable to authenticate.');
         });
 };
 
-exports.dashboard = function (req, res) {
-    res.render('dashboard', { user: req.session.user });
+exports.dashboard = async function (req, res) {
+    try {
+        const programs = await studentModel.findAllMentorshipPrograms();
 
-}
+        res.render('dashboard', { user: req.session.user, programs: programs });
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).send('Internal Server Error');
+    }
+};
 
 exports.logout = function (req, res) {
     req.session.destroy((err) => {
@@ -106,8 +108,7 @@ exports.logout = function (req, res) {
             console.error("Error destroying session:", err);
             return res.status(500).send("Logout failed.");
         }
-
-        res.status(200).send("Logout successful.");
+        res.render('logout')
     });
 };
 
@@ -122,22 +123,19 @@ exports.adminLoggedIn = async function (req, res) {
     console.log('Entered Email:', email);
     console.log('Entered Password:', password);
 
-    // Check if the email and password are valid
     if (email && email.startsWith('admin') && email.endsWith('@gmail.com') && password === 'Admin') {
         // Create a session for the user
         req.session.user = { email: email, role: 'admin' };
 
-        // Log the login activity
         console.log(`${email} has logged into the admin dashboard`);
 
         try {
-            // Retrieve mentorship programs data
             const programs = await studentModel.findAllMentorshipPrograms();
             const students = await studentModel.findAllStudents();
             const coaches = await studentModel.findAllCoaches();
+            const bookings = await studentModel.findAllBookings();
 
-            // Render the displayDetails view with the data
-            res.render('displayDetails', { user: req.session.user, opportunities: programs, students: students, coaches: coaches });
+            res.render('displayDetails', { user: req.session.user, opportunities: programs, students: students, coaches: coaches, bookings: bookings });
         } catch (error) {
             console.error('Error:', error);
             res.status(500).send('Internal Server Error');
@@ -162,10 +160,8 @@ exports.insertMentorshipProgram = async (req, res) => {
     };
 
     try {
-        // Insert the program into the mentorship database
         const addedProgram = await studentModel.insertMentorshipProgram(newProgram);
 
-        // Send a success response
         res.status(200).json({ success: true, message: 'Program added successfully.' });
     } catch (error) {
         console.error('Error adding program:', error);
@@ -211,17 +207,13 @@ exports.searchByCode = async function (req, res) {
     try {
         const query = req.body.programCode;
 
-        // Retrieve mentorship programs data based on the search query
         const programs = await studentModel.findProgramByCode(query);
 
-        // Retrieve all students and coaches data (assuming these functions exist in your model)
         const students = await studentModel.findAllStudents();
         const coaches = await studentModel.findAllCoaches();
 
-        // Log retrieved data
         console.log('Search Results:', programs);
 
-        // Render the displayDetails template with the search results in the opportunities section
         res.render('displayDetails', { user: req.session.user, opportunities: programs, students: students, coaches: coaches });
     } catch (error) {
         console.error('Error:', error);
@@ -234,7 +226,6 @@ exports.searchByCode = async function (req, res) {
 exports.addCoach = async function (req, res) {
     const { coachName, coachEmail, coachProgram, coachQualification } = req.body;
 
-    // Create an object with the coach data
     const coachData = {
         coachName: coachName,
         coachEmail: coachEmail,
@@ -243,10 +234,8 @@ exports.addCoach = async function (req, res) {
     };
 
     try {
-        // Insert the coach data into the coaches database
         const addedCoach = await studentModel.insertCoach(coachData);
 
-        // Send a success response
         res.status(200).json({ success: true, message: 'Coach added successfully.' });
     } catch (error) {
         console.error('Error adding coach:', error);
@@ -269,7 +258,6 @@ exports.displayCoachesData = function (req, res) {
 // Controller function to get all coaches
 exports.getAllCoaches = async (req, res) => {
     try {
-        // Retrieve all coaches from the database
         const coaches = await studentModel.findAllCoaches();
         res.json({ success: true, coaches });
     } catch (error) {
@@ -282,7 +270,6 @@ exports.getAllCoaches = async (req, res) => {
 // Controller function to get all coach names
 exports.getAllCoachNames = async (req, res) => {
     try {
-        // Retrieve only coach names from the database
         const coachName = await studentModel.findAllCoachNames();
         res.json({ success: true, coachName });
     } catch (error) {
@@ -290,25 +277,6 @@ exports.getAllCoachNames = async (req, res) => {
         res.status(500).json({ success: false, message: 'Failed to get coach names. Please try again.' });
     }
 };
-
-// Controller function to render the update form
-exports.renderUpdateForm = function (req, res) {
-    const programId = req.query.programId;
-    studentModel.findProgramById(programId)
-        .then((program) => {
-            if (program) {
-                res.render('updateProgram', { program });
-            } else {
-                res.send('Program not found.');
-            }
-        })
-        .catch((error) => {
-            console.error('Error:', error);
-            res.send('Error finding the program.');
-        });
-};
-
-//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 // Controller function to update a program
 exports.updateProgram = async (req, res) => {
@@ -350,7 +318,6 @@ exports.removeProgram = async (req, res) => {
     }
 };
 
-//-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 exports.testInsertMentorship = async (req, res) => {
     const program = { name: 'Test Program', description: 'This is a test program' };
@@ -410,12 +377,11 @@ exports.getBookingById = async (req, res) => {
 
 exports.updateBooking = async (req, res) => {
     try {
-        console.log('hello world!');
-        const {bookingId} = req.params;
-        console.log('_id:' + bookingId);
-        console.log('here you go:' + JSON.stringify(req.body));
+        const { bookingId } = req.params;
+
+        console.log(JSON.stringify(req.body));
         const updatedData = req.body;
-        
+
         const numReplaced = await studentModel.updateBooking(bookingId, updatedData);
         if (numReplaced > 0) {
             res.json({ message: 'Booking updated successfully' });
@@ -431,8 +397,8 @@ exports.updateBooking = async (req, res) => {
 
 exports.removeBooking = async (req, res) => {
 
-    const {bookingId} = req.params;
-    
+    const { bookingId } = req.params;
+
     try {
         const removed = await studentModel.removeUserBooking(bookingId);
         if (removed) {

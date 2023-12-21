@@ -79,6 +79,16 @@
             overflow-y: auto;
             height: 400px;
         }
+
+        
+        .scrollable-section {
+            max-height: 300px;
+            overflow-y: auto;
+            background-color: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid #C3C3C3;
+        }
     </style>
 </head>
 <body style="margin: 0; padding: 0; box-sizing: border-box; height: 100vh;">
@@ -87,305 +97,335 @@
         <h1>Welcome, {{ user.firstname }} {{ user.lastname }}</h1>
 
         <div class="d-flex">
-        <!-- Sidebar -->
-        <div class="sidebar">
-            <ul class="list-unstyled">
-                <li class="mt-4 p-2"><a href="#"><i class="bi bi-person-fill" style="font-size: 24px;"></i>{{ user.firstname }}</a></li>
-                <li class="mt-4 p-2"><a href="#"><i class="bi bi-speedometer" style="font-size: 24px;"></i>My Dashboard</a></li>
-                <li class="mt-4 p-2"><a href="#"><i class="bi bi-magic" style="font-size: 24px;"></i>Available Opportunities</a></li>
-                <li class="mt-4 p-2"><a href="#"><i class="bi bi-chat-left-text-fill" style="font-size: 24px;"></i>Message</a></li>
-                <li class="mt-4 p-2"><a href="#"><i class="bi bi-plus-square-fill" style="font-size: 24px;"></i>Add/Modify/Remove Opportunities</a></li>
-                <li class="mt-4 p-2"><a href="#"><i class="bi bi-gear-fill" style="font-size: 24px;"></i>Settings</a></li>
-                <li class="mt-4 p-2" id="logoutButton"><a href="/students/logout"><i class="bi bi-box-arrow-left" style="font-size: 24px;"></i>Logout</a></li>
-            </ul>
-        </div>
-
-
-        <!-- Content Sections -->
-        <div class="content-sections">
-
-            <!-- First Section - Enrolled Courses -->
-            <section class="enrolled-courses">
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="course-card text-center">
-                            <!-- Display enrolled courses cards here -->
-                            <img src="/public/images/image_12.png" alt="Image" class="img-fluid">
-                            <h4>Career Advice</h4>
-                            <p>Identifying strength and weakness and developing a plan to achieve career goals</p>
-                            <div class="d-flex justify-content-center align-items-center">
-                                <i class="bi bi-bookmark-check-fill" style="color: #3B8D48; font-size: 24px;"></i>
-                            </div>
-                            <div class="d-flex justify-content-center mt-3">
-                                <button type="button" class="btn btn-primary mx-2 book-session-button"
-                                    data-bs-toggle="modal"
-                                    data-bs-target="#bookingModal"
-                                    data-program='{
-                                        "goal": "",
-                                        "coach": "",
-                                        "email": "",
-                                        "date": "",
-                                        "document": ""
-                                    }'
-                                    >Book Session</button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="course-card text-center">
-                            <!-- Display enrolled courses cards here -->
-                            <img src="/public/images/image_15.png" alt="Image" class="img-fluid">
-                            <h4>Mock Interviews</h4>
-                            <p>Identifying strength and weakness and developing a plan to achieve career goals</p>
-                            <div class="d-flex justify-content-center align-items-center">
-                                <i class="bi bi-bookmark-check-fill" style="color: #3B8D48; font-size: 24px;"></i>
-                            </div>
-                            <div class="d-flex justify-content-center mt-3">
-                                <button type="button" class="btn btn-primary mx-2 book-session-button"
-                                    data-bs-toggle="modal"
-                                    data-bs-target="#bookingModal"
-                                    data-program='{
-                                        "goal": "",
-                                        "coach": "",
-                                        "email": "",
-                                        "date": "",
-                                        "document": ""
-                                    }'
-                                    >Book Session</button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="course-card text-center">
-                            <!-- Display enrolled courses cards here -->
-                            <img src="/public/images/image_13.png" alt="Image" class="img-fluid">
-                            <h4>Resume Review</h4>
-                            <p>Identifying strength and weakness and developing a plan to achieve career goals</p>
-                            <div class="d-flex justify-content-center align-items-center">
-                                <i class="bi bi-bookmark-check-fill" style="color: #3B8D48; font-size: 24px;"></i>
-                            </div>
-                            <div class="d-flex justify-content-center mt-3">
-                                <button type="button" class="btn btn-primary mx-2 book-session-button"
-                                    data-bs-toggle="modal"
-                                    data-bs-target="#bookingModal"
-                                    data-program='{
-                                        "goal": "",
-                                        "coach": "",
-                                        "email": "",
-                                        "date": "",
-                                        "document": ""
-                                    }'
-                                    >Book Session</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- View More Option -->
-                <div class="view-more" style="padding: 20px;">
-                <a href="#" style="color: #E1658B;">View More</a>
-                </div>
-            </section>
-
-            <!-- Second Section - Browse Booked Sessions -->
-            <section class="available-courses">
-                <h2>Browse All Booked Sessions</h2>
-                <div class="session-table">
-                    <table class="table table-bordered">
-                        <thead>
-                            <tr>
-                                <th>Your Goal</th>
-                                <th>Mentor/Coach</th>
-                                <th>Mentor Email</th>
-                                <th>Date of Session</th>
-                                <th>Uploaded Documents</th>
-                                <th>Option</th>
-                            </tr>
-                        </thead>
-                        <tbody id="booking-template">
-                            <tr>
-                                {{#bookings}}
-                                <td>{{goal}}</td>
-                                <td>{{coach}}</td>
-                                <td>{{email}}</td>
-                                <td>{{date}}</td>
-                                <td>{{document}}</td>
-                                <td>
-                                
-                                {{/bookings}}
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </section>
-
-            <!-- Booking Modal -->
-            <div class="modal fade" id="bookingModal" tabindex="-1" role="dialog" aria-labelledby="bookingModalLabel" aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="bookingModalLabel">Book Session</h5>
-                </div>
-                <div class="modal-body">
-                    <form id="bookingForm" method="POST" action='/bookings_insert' >
-                    <input type="hidden" id="userId" name="userId" value={{ user._id }}/>
-                    <div class="form-group">
-                        <label for="goal">Set Goal</label>
-                        <input type="text" class="form-control" id="goal" name="goal" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="coach">Choose Coach/Mentor</label>
-                        <select class="form-control" id="coach" name="coach" required>
-                            <option value="">Select Coach/Mentor</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="email">Email</label>
-                        <input type="text" class="form-control" id="email" name="email">
-                    </div>
-                    <div class="form-group">
-                        <label for="date">Select Date</label>
-                        <input type="date" class="form-control" id="date" name="date" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="document">Upload Document (if any)</label>
-                        <input type="file" class="form-control-file" id="document" name="document">
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Book</button>
-                    </div>
-                    </form>
-                </div>
-                </div>
-            </div>
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <ul class="list-unstyled">
+                    <li class="mt-4 p-2"><a href="#"><i class="bi bi-person-fill" style="font-size: 24px;"></i>{{ user.firstname }}</a></li>
+                    <li class="mt-4 p-2"><a href="#"><i class="bi bi-speedometer" style="font-size: 24px;"></i>My Dashboard</a></li>
+                    <li class="mt-4 p-2"><a href="#one"><i class="bi bi-magic" style="font-size: 24px;"></i>Available Opportunities</a></li>
+                    <li class="mt-4 p-2"><a href="#browseOpportunities"><i class="bi bi-eye-fill" style="font-size: 24px;"></i>Browse All Opportunities</a></li>
+                    <li class="mt-4 p-2"><a href="#two"><i class="bi bi-plus-square-fill" style="font-size: 24px;"></i>Add/Modify/Remove Booked Session</a></li>
+                    <li class="mt-4 p-2"><a href="#"><i class="bi bi-gear-fill" style="font-size: 24px;"></i>Settings</a></li>
+                    <li class="mt-4 p-2" id="logoutButton"><a href="/logout"><i class="bi bi-box-arrow-left" style="font-size: 24px;"></i>Logout</a></li>
+                </ul>
             </div>
 
-            <!-- update Modal -->
 
-            <div class="modal fade" id="updateModal" tabindex="-1" role="dialog" aria-labelledby="updateModalLabel" aria-hidden="true">
+            <!-- Content Sections -->
+            <div class="content-sections">
+
+                <!-- First Section - Enrolled Courses -->
+                <section class="enrolled-courses" id="one">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="course-card text-center">
+                                <img src="/public/images/image_12.png" alt="Image" class="img-fluid">
+                                <h4>Career Advice</h4>
+                                <p>Identifying strength and weakness and developing a plan to achieve career goals</p>
+                                <div class="d-flex justify-content-center align-items-center">
+                                    <i class="bi bi-bookmark-check-fill" style="color: #3B8D48; font-size: 24px;"></i>
+                                </div>
+                                <div class="d-flex justify-content-center mt-3">
+                                    <button type="button" class="btn btn-primary mx-2 book-session-button"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#bookingModal"
+                                        data-program='{
+                                            "goal": "",
+                                            "coach": "",
+                                            "email": "",
+                                            "date": "",
+                                            "document": ""
+                                        }'
+                                        >Book Session</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="course-card text-center">
+                                <img src="/public/images/image_15.png" alt="Image" class="img-fluid">
+                                <h4>Mock Interviews</h4>
+                                <p>Identifying strength and weakness and developing a plan to achieve career goals</p>
+                                <div class="d-flex justify-content-center align-items-center">
+                                    <i class="bi bi-bookmark-check-fill" style="color: #3B8D48; font-size: 24px;"></i>
+                                </div>
+                                <div class="d-flex justify-content-center mt-3">
+                                    <button type="button" class="btn btn-primary mx-2 book-session-button"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#bookingModal"
+                                        data-program='{
+                                            "goal": "",
+                                            "coach": "",
+                                            "email": "",
+                                            "date": "",
+                                            "document": ""
+                                        }'
+                                        >Book Session</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 d-none">
+                            <div class="course-card text-center">
+                                <img src="/public/images/image_13.png" alt="Image" class="img-fluid">
+                                <h4>Resume Review</h4>
+                                <p>Identifying strength and weakness and developing a plan to achieve career goals</p>
+                                <div class="d-flex justify-content-center align-items-center">
+                                    <i class="bi bi-bookmark-check-fill" style="color: #3B8D48; font-size: 24px;"></i>
+                                </div>
+                                <div class="d-flex justify-content-center mt-3">
+                                    <button type="button" class="btn btn-primary mx-2 book-session-button"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#bookingModal"
+                                        data-program='{
+                                            "goal": "",
+                                            "coach": "",
+                                            "email": "",
+                                            "date": "",
+                                            "document": ""
+                                        }'
+                                        >Book Session</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="view-more" style="padding: 20px;">
+                    <a href="#" style="color: #E1658B;">View More</a>
+                    </div>
+                </section>
+
+                <!-- Second Section - Browse User specific Booked Sessions -->
+                <section class="available-courses" id="two">
+                    <h2>Browse Your Booked Sessions</h2>
+                    <div class="session-table">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Your Goal</th>
+                                    <th>Mentor/Coach</th>
+                                    <th>Mentor Email</th>
+                                    <th>Date of Session</th>
+                                    <th>Uploaded Documents</th>
+                                    <th>Option</th>
+                                </tr>
+                            </thead>
+                            <tbody id="booking-template">
+                                <tr>
+                                    {{#bookings}}
+                                    <td>{{goal}}</td>
+                                    <td>{{coach}}</td>
+                                    <td>{{email}}</td>
+                                    <td>{{date}}</td>
+                                    <td>{{document}}</td>
+                                    <td>
+                                    
+                                    {{/bookings}}
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- Booking Modal -->
+                <div class="modal fade" id="bookingModal" tabindex="-1" role="dialog" aria-labelledby="bookingModalLabel" aria-hidden="true">
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="upadeteModalLabel">Update Session</h5>
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="bookingModalLabel">Book Session</h5>
+                    </div>
+                    <div class="modal-body">
+                        <form id="bookingForm" method="POST" action='/bookings_insert' >
+                        <input type="hidden" id="userId" name="userId" value={{ user._id }}/>
+                        <div class="form-group">
+                            <label for="goal">Set Goal</label>
+                            <input type="text" class="form-control" id="goal" name="goal" required>
                         </div>
-                        <div class="modal-body">
-                            <form id="updateForm">
-                                <input type="hidden" id="bookingId" name="bookingId" value={{ booking._id }}/>
-                                <div class="form-group">
-                                    <label for="goal">Set Goal</label>
-                                    <input type="text" class="form-control" id="goal" name="goal" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="coach">Choose Coach/Mentor</label>
-                                    <select class="form-control" id="coach" name="coach" readonly>
-                                        <option value="">Select Coach/Mentor</option>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label for="email">Email</label>
-                                    <input type="text" class="form-control" id="email" name="email">
-                                </div>
-                                <div class="form-group">
-                                    <label for="date">Select Date</label>
-                                    <input type="date" class="form-control" id="date" name="date" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="document">Upload Document (if any)</label>
-                                    <input type="file" class="form-control-file" id="document" name="document" readonly>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                    <button type="submit" class="btn btn-primary" id="updateBookingButton">Update Session</button>
-                                </div>
-                            </form>
+                        <div class="form-group">
+                            <label for="coach">Choose Coach/Mentor</label>
+                            <select class="form-control" id="coach" name="coach" required>
+                                <option value="">Select Coach/Mentor</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="text" class="form-control" id="email" name="email">
+                        </div>
+                        <div class="form-group">
+                            <label for="date">Select Date</label>
+                            <input type="date" class="form-control" id="date" name="date" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="document">Upload Document (if any)</label>
+                            <input type="file" class="form-control-file" id="document" name="document">
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary">Book</button>
+                        </div>
+                        </form>
+                    </div>
+                    </div>
+                </div>
+                </div>
+
+                <!-- update Modal -->
+
+                <div class="modal fade" id="updateModal" tabindex="-1" role="dialog" aria-labelledby="updateModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="upadeteModalLabel">Update Session</h5>
+                            </div>
+                            <div class="modal-body">
+                                <form id="updateForm">
+                                    <input type="hidden" id="bookingId" name="bookingId" value={{ booking._id }}/>
+                                    <div class="form-group">
+                                        <label for="goal">Set Goal</label>
+                                        <input type="text" class="form-control" id="goal" name="goal" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="coach">Choose Coach/Mentor</label>
+                                        <select class="form-control" id="coach" name="coach" readonly>
+                                            <option value="">Select Coach/Mentor</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="email">Email</label>
+                                        <input type="text" class="form-control" id="email" name="email">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="date">Select Date</label>
+                                        <input type="date" class="form-control" id="date" name="date" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="document">Upload Document (if any)</label>
+                                        <input type="file" class="form-control-file" id="document" name="document" readonly>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        <button type="submit" class="btn btn-primary" id="updateBookingButton">Update Session</button>
+                                    </div>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
 
-            
-            
-            <!-- Third Section - Coaches Section -->
-            <section class="coaches-section">
-                <h2>My Coaches/Mentors</h2>
-                <div class="row">
-                    <div class="col-md-4">
-                        <div class="coach-card">
-                            <img src="/public/images/image_1.png" alt="Image" class="img-fluid">
-                            <p>Coach Name 1</p>
-                            <p>Mentorship Program: Business Coaching</p>
-                            <div class="d-flex justify-content-center mt-3">
-                                <button class="btn">Remove</button>
-                                <button class="btn">Change Mentor</button>
+                <!-- Section Three - Browse All Opportunities -->
+                    <section id="browseOpportunities">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h2 style="color: #E1658B;">Browse All Opportunities</h2>
+                        </div>
+
+                        <div class="scrollable-section" >
+                            <table class="table table-bordered table-striped" id="browseOpportunitiesTable">
+                                <thead>
+                                    <tr>
+                                        <th style="display: none;">_id</th>
+                                        <th>Program Code</th>
+                                        <th>Mentorship Opportunity Name</th>
+                                        <th>Mentor/Coach</th>
+                                        <th>Duration</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="browseOpportunitiesTableBody">
+                                    {{#opportunities}}
+                                    <tr>
+                                        <td style="display: none;">{{programId}}</td>
+                                        <td>{{programCode}}</td>
+                                        <td>{{opportunityName}}</td>
+                                        <td>{{mentorCoach}}</td>
+                                        <td>{{duration}}</td>
+                                    </tr>
+                                    {{/opportunities}}
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+                
+                <!-- Third Section - Coaches Section -->
+                <section class="coaches-section">
+                    <h2>My Coaches/Mentors</h2>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="coach-card">
+                                <img src="/public/images/image_1.png" alt="Image" class="img-fluid">
+                                <p>Coach Name 1</p>
+                                <p>Mentorship Program: Business Coaching</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="coach-card">
+                                <img src="/public/images/image_2.png" alt="Image" class="img-fluid">
+                                <p>Coach Name 2</p>
+                                <p>Mentorship Program: Leadership Coaching</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="coach-card">
+                                <img src="/public/images/image_3.png" alt="Image" class="img-fluid">
+                                <p>Coach Name 2</p>
+                                <p>Mentorship Program: Leadership Coaching</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4 d-none">
+                            <div class="coach-card">
+                                <img src="/public/images/image_1.png" alt="Image" class="img-fluid">
+                                <p>Coach Name 1</p>
+                                <p>Mentorship Program: Business Coaching</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4 d-none">
+                            <div class="coach-card">
+                                <img src="/public/images/image_2.png" alt="Image" class="img-fluid">
+                                <p>Coach Name 2</p>
+                                <p>Mentorship Program: Leadership Coaching</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4 d-none">
+                            <div class="coach-card">
+                                <img src="/public/images/image_3.png" alt="Image" class="img-fluid">
+                                <p>Coach Name 2</p>
+                                <p>Mentorship Program: Leadership Coaching</p>
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-4">
-                        <div class="coach-card">
-                            <img src="/public/images/image_2.png" alt="Image" class="img-fluid">
-                            <p>Coach Name 2</p>
-                            <p>Mentorship Program: Leadership Coaching</p>
-                            <div class="d-flex justify-content-center mt-3">
-                                <button class="btn">Remove</button>
-                                <button class="btn">Change Mentor</button>
+                    <div class="view-more" style="padding: 20px;">
+                    <a href="##" style="color: #E1658B;">View More</a>
+                </div>
+                </section>
+
+            <!-- Fourth Section - Notifications -->
+            <section class="notifications-section" id="five" style="height: 400px;">
+                <div style="background-color: white; height: 100%; padding: 20px;">
+
+                    <h2 style="color: #E1658B; text-align: center; margin-bottom: 20px;">Notifications</h2>
+
+                    <!-- Cards Row -->
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="card text-start" style="background-color: #D9D9D9; padding: 20px; margin-bottom: 20px; height: 100%;">
+                                <h4 style="color: #E1658B;">Opportunity Update</h4>
+                                <p style="color: #000000;">Your opportunity has been updated. Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
                             </div>
                         </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="coach-card">
-                            <img src="/public/images/image_3.png" alt="Image" class="img-fluid">
-                            <p>Coach Name 2</p>
-                            <p>Mentorship Program: Leadership Coaching</p>
-                            <div class="d-flex justify-content-center mt-3">
-                                <button class="btn">Remove</button>
-                                <button class="btn">Change Mentor</button>
+
+                        <div class="col-md-4">
+                            <div class="card text-start" style="background-color: #D9D9D9; padding: 20px; margin-bottom: 20px; height: 100%;">
+                                <h4 style="color: #E1658B;">Opportunity Update</h4>
+                                <p style="color: #000000;">Your opportunity has been updated. Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="card text-start no-border" style="background-color: #D9D9D9; padding: 20px; margin-bottom: 20px; height: 100%;">
+                                <h4 style="color: #E1658B;">Opportunity Update</h4>
+                                <p style="color: #000000;">Your opportunity has been updated. Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
                             </div>
                         </div>
                     </div>
                 </div>
             </section>
-
-        <!-- Fourth Section - Notifications -->
-        <section class="notifications-section" style="height: 400px;">
-            <div style="background-color: white; height: 100%; padding: 20px;">
-
-                <h2 style="color: #E1658B; text-align: center; margin-bottom: 20px;">Notifications</h2>
-
-                <!-- Cards Row -->
-                <div class="row">
-                    <div class="col-md-4">
-                        <div class="card text-start" style="background-color: #D9D9D9; padding: 20px; margin-bottom: 20px; height: 100%;">
-                            <h4 style="color: #E1658B;">Opportunity Update</h4>
-                            <p style="color: #000000;">Your opportunity has been updated. Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-                        </div>
-                    </div>
-
-                    <div class="col-md-4">
-                        <div class="card text-start" style="background-color: #D9D9D9; padding: 20px; margin-bottom: 20px; height: 100%;">
-                            <h4 style="color: #E1658B;">Opportunity Update</h4>
-                            <p style="color: #000000;">Your opportunity has been updated. Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-                        </div>
-                    </div>
-
-                    <div class="col-md-4">
-                        <div class="card text-start no-border" style="background-color: #D9D9D9; padding: 20px; margin-bottom: 20px; height: 100%;">
-                            <h4 style="color: #E1658B;">Opportunity Update</h4>
-                            <p style="color: #000000;">Your opportunity has been updated. Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="view-more" style="padding: 20px;">
-                <a href="#" style="color: #E1658B;">View More</a>
-            </div>
-        </section>
-
-
-
-    </div>
-        
-
+        </div>
     </div>
 
     <section class="footer mt-4 mb-0">
@@ -413,7 +453,7 @@
     </section>
 
     <!-- Include Bootstrap JS at the end of the body -->
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js" integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.7.7/handlebars.min.js"></script>

@@ -1,57 +1,45 @@
-// Toggle display of additional enrolled courses on "View More" click
 document.querySelector('.view-more').addEventListener('click', function () {
     document.querySelectorAll('.enrolled-courses .row .col-md-6:nth-child(n+3)').forEach(function (course) {
         course.classList.toggle('d-none');
     });
 });
 
-
-// Get all book session buttons
 const bookSessionButtons = document.querySelectorAll('.book-session-button');
 
-// Get the booking form elements
 const goalInput = document.getElementById('goal');
 const coachInput = document.getElementById('coach');
 const emailInput = document.getElementById('email');
 const dateInput = document.getElementById('date');
 const documentInput = document.getElementById('document');
 
-// Add click event listener to each book session button
 bookSessionButtons.forEach(button => {
     button.addEventListener('click', () => {
-        // Get the data-program attribute value
         const sessionData = JSON.parse(button.getAttribute('data-program'));
 
-        // Populate the form fields with session data
         goalInput.value = sessionData.goal;
         coachInput.value = sessionData.coach;
         emailInput.value = sessionData.email;
         dateInput.value = sessionData.date;
         documentInput.value = sessionData.document;
 
-        // Show the booking modal
         $('#bookingModal').modal('show');
     });
 });
 
-// Function to fetch coach names and populate the <select> element
 function populateCoaches() {
-    // Make an AJAX request to fetch coach names from the server
-    fetch('/students/getCoaches') // Replace with the correct API endpoint
+    fetch('/students/getCoaches')
         .then(response => response.json())
         .then(data => {
             const coachSelect = document.getElementById('coach');
 
-            // Clear existing options (except the first empty one)
             while (coachSelect.options.length > 1) {
                 coachSelect.remove(1);
             }
 
-            // Populate the <select> with fetched coach names
             data.coaches.forEach(coach => {
                 const option = document.createElement('option');
-                option.value = coach.coachName; // Use "coachName" property for the name
-                option.textContent = coach.coachName; // Display the name
+                option.value = coach.coachName; 
+                option.textContent = coach.coachName;
                 coachSelect.appendChild(option);
             });
         })
@@ -92,7 +80,6 @@ async function handleBookingSubmit() {
 
         if (response.ok) {
             alert("Session booked successfully!");
-            // Optionally, you can close the modal or perform other actions here
         }
         else {
             const responseData = await response.json();
@@ -105,9 +92,7 @@ async function handleBookingSubmit() {
     }
 }
 
-// Wait for the DOM to be ready
 document.addEventListener("DOMContentLoaded", function () {
-    // Define a function to render the data using Handlebars
     function renderBookings(bookings) {
         const templateSource = document.getElementById("booking-template");
 
@@ -133,14 +118,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const userId = document.getElementById("userId");
 
-    // Make an AJAX GET request to fetch bookings data from the server
     const formData = new FormData();
     formData.append("userId", userId?.value);
     const urlId = userId?.value?.split("/")[0]
     fetch(`/my-bookings/${userId?.value}`)
         .then((response) => response.json())
         .then((data) => {
-            // Assuming the server returns an array of bookings
             console.log("DATA", data)
             renderBookings(data);
         })
@@ -154,7 +137,6 @@ function openUpdateModal(bookingId) {
     fetch(`/bookings/${bookingId}`)
         .then(response => response.json())
         .then(data => {
-            // Populate the modal's form fields with this data
             document.getElementById('bookingId').value = bookingId;
             document.getElementById('goal').value = data.goal;
             document.getElementById('coach').value = data.coach;

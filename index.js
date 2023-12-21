@@ -4,7 +4,6 @@ const session = require('express-session');
 const jwt = require('jsonwebtoken');
 const studentRoutes = require('./routes/studentRoutes');
 const path = require('path');
-// Enable CORS
 const cors = require('cors');
 
 
@@ -31,25 +30,26 @@ app.use(
 const setUserId = (req, res, next) => {
     const token = req.header('Authorization');
     if (!token) {
-      return res.status(401).send('No token provided.');
+        return res.status(401).send('No token provided.');
     }
-  
+
     try {
-      const decoded = jwt.verify(token, '1234');
-      req.userId = decoded._id;
-      next();
+        const decoded = jwt.verify(token, '1234');
+        req.userId = decoded._id;
+        next();
     } catch (ex) {
-      res.status(400).send('Invalid token.');
+        res.status(400).send('Invalid token.');
     }
-  };
+};
 
 const isAuthenticated = (req, res, next) => {
     if (req.session && req.session.userId) {
-      return next();
+        return next();
     } else {
-      res.redirect('/login');
+        res.redirect('/login');
     }
-  };
+};
+
 
 module.exports = isAuthenticated;
 
@@ -71,16 +71,13 @@ app.get('/', (req, res) => {
     res.sendFile(__dirname + '/public/index.html');
 });
 
-app.use('/', studentRoutes);
 
-// Include the studentRoutes
 app.use('/', studentRoutes);
 app.use('/students', studentRoutes);
 app.use('/admin', studentRoutes);
 app.use('/bookings', setUserId, studentRoutes);
 
 app.post('/students/removeProgram', (req, res) => {
-    // Assuming you have a function in your studentModel to remove the program by code
     studentModel.removeProgram(req.body.programCode).then((result) => {
         if (result) {
             res.json({ success: true, message: 'Program removed successfully.' });
@@ -91,9 +88,6 @@ app.post('/students/removeProgram', (req, res) => {
         res.status(500).json({ success: false, message: 'An error occurred.', error: error });
     });
 });
-
-
-
 
 const PORT = 3000;
 app.listen(PORT, () => {

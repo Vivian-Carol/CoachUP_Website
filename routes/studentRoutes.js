@@ -1,50 +1,23 @@
 const express = require('express');
 const studentController = require('../controllers/studentController');
 const studentModel = require('../models/studentModel');
-const { isAuthenticated } = require('../index.js');
+const { isAuthenticated } = require('../index');
 
 const router = express.Router();
 
 router.get('/', studentController.welcome);
 
-//students routes
 router.get('/signup', studentController.signup);
 router.post('/students/signup', studentController.signupSubmit);
 router.get('/students/signupSuccess', studentController.signupSuccess);
 router.get('/login', studentController.login);
 router.post('/students/login', studentController.loggedIn);
-router.get('/dashboard', studentController.dashboard);
-
-// Coach routes
-router.post('/students/addCoach', studentController.addCoach);
-router.get('/students/getCoaches', studentController.getAllCoaches);
-router.get('/students/getCoachNames', studentController.getAllCoachNames);
-
-//admin routes
-router.get('/admin_login', studentController.adminlogin)
-router.post('/admin/login_page', studentController.adminLoggedIn)
-
-// Add middleware to check user role for admin routes
-const checkAdminRole = (req, res, next) => {
-    const user = req.session.user;
-    if (user && user.role === 'admin') {
-        next();
-    } else {
-        res.redirect('/login');
-    }
-};
-
-// Admin dashboard route
-router.get('/admin/dashboard', checkAdminRole, async (req, res) => {
+router.get('/dashboard', async (req, res) => {
     try {
-        // Retrieve mentorship programs data
         const programs = await studentModel.findAllMentorshipPrograms();
-        const students = await studentModel.findAllStudents();
-        const coaches = await studentModel.findAllCoaches();
 
-        // Check if data is available
-        if (programs.length > 0 || students.length > 0 || coaches.length > 0) {
-            res.render('displayDetails', { user: req.session.user, opportunities: programs, students: students, coaches: coaches });
+        if (programs.length > 0) {
+            res.render('dashboard', { user: req.session.user, opportunities: programs });
         } else {
             res.status(404).send('No data available.');
         }
@@ -55,40 +28,64 @@ router.get('/admin/dashboard', checkAdminRole, async (req, res) => {
 });
 
 
-// Render the page with the form
+router.post('/students/addCoach', studentController.addCoach);
+router.get('/students/getCoaches', studentController.getAllCoaches);
+router.get('/students/getCoachNames', studentController.getAllCoachNames);
+
+router.get('/admin_login', studentController.adminlogin)
+router.post('/admin/login_page', studentController.adminLoggedIn)
+
+const checkAdminRole = (req, res, next) => {
+    const user = req.session.user;
+    if (user && user.role === 'admin') {
+        next();
+    } else {
+        res.redirect('/login');
+    }
+};
+
+router.get('/admin/dashboard', checkAdminRole, async (req, res) => {
+    try {
+        const programs = await studentModel.findAllMentorshipPrograms();
+        const students = await studentModel.findAllStudents();
+        const coaches = await studentModel.findAllCoaches();
+        const bookings = await studentModel.findAllBookings();
+
+        if (programs.length > 0 || students.length > 0 || coaches.length > 0 || bookings.length > 0) {
+            res.render('displayDetails', { user: req.session.user, opportunities: programs, students: students, coaches: coaches, bookings: bookings });
+        } else {
+            res.status(404).send('No data available.');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).send('Internal Server Error');
+    }
+});
+
+
 router.get('/admin_dashboard', (req, res) => {
     res.render('admin_dashboard.mustache');
 });
 
 router.get('/logout', studentController.logout);
-//router.get('/events', studentController.displayData)
-//router.get('/coaches', studentController.displayCoachesData)
 
-// Handle mentorship program routes
+
 router.post('/students/addProgram', studentController.insertMentorshipProgram);
 router.post('/students/searchByCode', studentController.searchByCode);
 
-// Define a custom middleware to log or check the request body
 const checkRequestBody = (req, res, next) => {
-    // Log the request body to the console
     console.log('Request Body:', req.body);
     next();
 };
 
-// Add the middleware before the route handler
 router.post('/students/searchByCode', studentController.searchByCode);
 
-//---------------------------------------------------------------------------------------------------------------------------------------------------------------------
 router.put('/students/updateProgram/:programId', studentController.updateProgram);
 
-
-// Add a POST route for /students/removeProgram
 router.delete('/students/removeProgram', checkRequestBody, studentController.removeProgram);
 
-//----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 router.post('/testInsertMentorship', studentController.testInsertMentorship);
 
-// Booking routes
 router.post('/bookings_insert', studentController.createBooking);
 router.get('/my-bookings/:userId', studentController.getAllBookings);
 
