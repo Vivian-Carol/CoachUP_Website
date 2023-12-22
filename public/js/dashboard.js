@@ -142,7 +142,7 @@ function openUpdateModal(bookingId) {
             document.getElementById('coach').value = data.coach;
             document.getElementById('email').value = data.email;
             document.getElementById('date').value = data.date;
-            document.getElementById('document').value = data.document;
+            document.getElementById('documentName').textContent = data.document ? data.document : 'File Already saved';
             $('#updateModal').modal('show');
         });
 }
