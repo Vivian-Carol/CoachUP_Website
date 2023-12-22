@@ -5,6 +5,7 @@ const jwt = require('jsonwebtoken');
 const studentRoutes = require('./routes/studentRoutes');
 const path = require('path');
 const cors = require('cors');
+require('dotenv').config();
 
 
 const app = express();
@@ -21,7 +22,7 @@ app.use('/public', express.static('public'));
 
 app.use(
     session({
-        secret: '1234',
+        secret: process.env.SECRET,
         resave: false,
         saveUninitialized: false,
     })
@@ -34,7 +35,7 @@ const setUserId = (req, res, next) => {
     }
 
     try {
-        const decoded = jwt.verify(token, '1234');
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
         req.userId = decoded._id;
         next();
     } catch (ex) {

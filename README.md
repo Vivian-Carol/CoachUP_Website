@@ -32,4 +32,3 @@ Folder for Mustache view templates. Includes templates like header.mustache, adm
 
 
 CoachUp Platform was Designed and Created by Caroline Vivian Anyango Otuoma 2023 Web Development 2 Assignment.
-

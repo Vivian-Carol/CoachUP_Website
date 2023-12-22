@@ -38,7 +38,7 @@ function populateCoaches() {
 
             data.coaches.forEach(coach => {
                 const option = document.createElement('option');
-                option.value = coach.coachName; 
+                option.value = coach.coachName;
                 option.textContent = coach.coachName;
                 coachSelect.appendChild(option);
             });
@@ -137,6 +137,7 @@ function openUpdateModal(bookingId) {
     fetch(`/bookings/${bookingId}`)
         .then(response => response.json())
         .then(data => {
+            console.log(data);
             document.getElementById('bookingId').value = bookingId;
             document.getElementById('goal').value = data.goal;
             document.getElementById('coach').value = data.coach;
