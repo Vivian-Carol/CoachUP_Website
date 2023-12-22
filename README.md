@@ -3,11 +3,11 @@ A mentorship platform where students/mentee can find mentorship programs and pro
 
 
 Hosted on Renderer. Hosting link provided below:
-https://node-app-yi9w.onrender.com/ 
+https://coachup-web-platform.onrender.com
 
-Admin log in Credentials: email: 'admin@gmail.com' and password: 'Admin'
+Admin log in Credentials: email: 'admin@gmail.com' and password: 'Admin' (to access admin side use these credentials)
 
-Students must sign-up so that their information can be saved in the system database then log in using their credentials
+Students must sign-up so that their information can be saved in the system database then log in using their credentials(create students credentials and log in).
 
 
 File and Folder Descriptions:
